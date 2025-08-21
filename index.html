@@ -1,0 +1,2677 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>FixieRun - Move to Earn PWA</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIkZpeGllUnVuIC0gTW92ZSB0byBFYXJuIiwKICAic2hvcnRfbmFtZSI6ICJGaXhpZVJ1biIsCiAgImRlc2NyaXB0aW9uIjogIkVhcm4gY3J5cHRvIHRva2VucyBieSBjeWNsaW5nIGFuZCBydW5uaW5nIiwKICAic3RhcnRfdXJsIjogIi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiMxODE4MTgiLAogICJ0aGVtZV9jb2xvciI6ICIjNUQ1Q0RFIiwKICAib3JpZW50YXRpb24iOiAicG9ydHJhaXQiLAogICJjYXRlZ29yaWVzIjogWyJmaXRuZXNzIiwgImhlYWx0aCIsICJzcG9ydHMiLCAiY3J5cHRvIl0sCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbDtiYXNlNjQsUEhOMlp5QjNhV1IwYUQwaU1qUXdJaUJvWldsbmFIUTlJakUyTUNJZ2VHMXNibk05SW1oMGRIQTZMeTkzZDNjdWR6TXViM0puTHpJd01EQXZjM1puSWlCMmFXVjNRbTk0UFNJd0lEQWdNalF3SURFMk1DSStQSEpsWTNRZ2QybGtkR2c5SWpJME1DSWdhR1ZwWjJoMFBTSXhOakFpSUdacGJHdzlJaU0xUkRWRFJFVWlMejQ4TDNOMlp6ND0iLAogICAgICAic2l6ZXMiOiAiMjQweDI0MCIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiCiAgICB9LAogICAgewogICAgICAic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbDtiYXNlNjQsUEhOMlp5QjNhV1IwYUQwaU5URXlJaUJvWldsbmFIUTlJalV4TWlJZ2VHMXNibk05SW1oMGRIQTZMeTkzZDNjdWR6TXViM0puTHpJd01EQXZjM1puSWlCMmFXVjNRbTk0UFNJd0lEQWdOVEV5SURVeE1pSStQSEpsWTNRZ2QybGtkR2c5SWpVeE1pSWdhR1ZwWjJoMFBTSTFNVElpSUdacGJHdzlJaU0xUkRWRFJFVWlMejQ4TDNOMlp6ND0iLAogICAgICAic2l6ZXMiOiAiNTEyeDUxMiIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiCiAgICB9CiAgXQp9" />
+    <meta name="theme-color" content="#5D5CDE">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="FixieRun">
+    
+    <!-- Performance & Security -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://kit.fontawesome.com">
+    <link rel="preconnect" href="https://unpkg.com">
+    
+    <!-- CSS Libraries -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- GPS Map - Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#5D5CDE',
+                        'primary-dark': '#4B4BC8',
+                        'bg-light': '#FFFFFF',
+                        'bg-dark': '#181818',
+                        'card-light': '#F8F9FA',
+                        'card-dark': '#262626',
+                        'success': '#10B981',
+                        'warning': '#F59E0B',
+                        'error': '#EF4444',
+                    },
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
+                    }
+                }
+            },
+            darkMode: 'class'
+        }
+    </script>
+
+    <style>
+        .glassmorphism {
+            backdrop-filter: blur(16px) saturate(180%);
+            background-color: rgba(255, 255, 255, 0.75);
+            border: 1px solid rgba(209, 213, 219, 0.3);
+        }
+        
+        .dark .glassmorphism {
+            background-color: rgba(38, 38, 38, 0.75);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+        }
+
+        .gradient-primary {
+            background: linear-gradient(135deg, #5D5CDE 0%, #4B4BC8 100%);
+        }
+
+        .gradient-success {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+        }
+
+        .gradient-warning {
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+        }
+
+        .input-focus {
+            font-size: 16px !important;
+            -webkit-appearance: none;
+        }
+
+        .workout-mode {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            z-index: 9999 !important;
+            background: #000 !important;
+            color: white !important;
+        }
+
+        .workout-metrics {
+            font-size: 2.5rem !important;
+            font-weight: 900 !important;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5) !important;
+        }
+
+        .workout-secondary {
+            font-size: 1.5rem !important;
+            font-weight: 700 !important;
+        }
+
+        .gps-map {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .safe-top {
+            padding-top: env(safe-area-inset-top);
+        }
+        
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        .gps-active {
+            background: linear-gradient(45deg, #10B981, #059669);
+            animation: pulse 2s infinite;
+        }
+
+        .gps-searching {
+            background: linear-gradient(45deg, #F59E0B, #D97706);
+            animation: pulse 1s infinite;
+        }
+
+        .gps-error {
+            background: linear-gradient(45deg, #EF4444, #DC2626);
+            animation: pulse 0.5s infinite;
+        }
+
+        .gps-disabled {
+            background: linear-gradient(45deg, #6B7280, #4B5563);
+        }
+
+        .haptic-feedback:active {
+            transform: scale(0.95);
+            transition: transform 0.1s ease;
+        }
+
+        .view-transition {
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .view-hidden {
+            transform: translateX(100%);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+        
+        .dark .skeleton {
+            background: linear-gradient(90deg, #374151 25%, #4B5563 50%, #374151 75%);
+            background-size: 200% 100%;
+        }
+        
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .achievement-badge {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { box-shadow: 0 0 5px #FFD700; }
+            to { box-shadow: 0 0 20px #FFD700, 0 0 30px #FFD700; }
+        }
+    </style>
+</head>
+<body class="h-full bg-bg-light dark:bg-bg-dark text-gray-900 dark:text-white transition-colors duration-300 safe-top safe-bottom">
+    
+    <div id="app" class="min-h-screen flex flex-col">
+        
+        <!-- GPS Status Bar -->
+        <div id="gpsStatusBar" class="fixed top-0 left-0 right-0 z-50 safe-top">
+            <div id="gpsIndicator" class="text-center py-2 text-white text-sm font-medium gps-disabled">
+                <i class="fas fa-satellite-dish mr-2"></i>
+                <span id="gpsStatusText">GPS initializing...</span>
+            </div>
+        </div>
+
+        <!-- Main Header -->
+        <header class="glassmorphism fixed top-0 left-0 right-0 z-40 safe-top" style="margin-top: 40px;">
+            <div class="flex items-center justify-between px-4 py-3">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 gradient-primary rounded-xl flex items-center justify-center">
+                        <i class="fas fa-bicycle text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold">FixieRun</h1>
+                        <div class="text-xs text-green-500 font-medium">Move to Earn</div>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-3">
+                    <div id="connectionStatus" class="flex items-center space-x-1">
+                        <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                        <span class="text-xs font-medium">Online</span>
+                    </div>
+                    <button id="walletBtn" class="px-3 py-1.5 bg-primary text-white rounded-lg text-xs font-medium transition-all hover:bg-primary-dark haptic-feedback">
+                        Connect
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Container -->
+        <main class="flex-1 transition-all duration-300" style="margin-top: 120px; margin-bottom: 100px;">
+            
+            <!-- HOME VIEW -->
+            <div id="homeView" class="px-4 py-6 space-y-6 max-w-full mx-auto view-transition">
+                
+                <!-- User Greeting -->
+                <div class="glassmorphism rounded-2xl p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="text-2xl font-bold">Ready to Move? 💪</h2>
+                            <p class="text-primary font-semibold">Start your fitness journey</p>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-3xl font-bold text-green-500" id="totalTokens">0.00</div>
+                            <div class="text-xs text-gray-600 dark:text-gray-400">$FIXIE earned</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Today's Stats -->
+                <div class="glassmorphism rounded-2xl p-6">
+                    <h3 class="text-lg font-bold mb-4">Today's Progress</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
+                            <div class="text-2xl font-bold text-blue-600" id="todayDistance">0.0</div>
+                            <div class="text-xs text-gray-600 dark:text-gray-400">Distance (km)</div>
+                        </div>
+                        <div class="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-xl">
+                            <div class="text-2xl font-bold text-green-600" id="todayDuration">0:00</div>
+                            <div class="text-xs text-gray-600 dark:text-gray-400">Duration</div>
+                        </div>
+                        <div class="text-center p-4 bg-red-50 dark:bg-red-900/20 rounded-xl">
+                            <div class="text-2xl font-bold text-red-600" id="todayCalories">0</div>
+                            <div class="text-xs text-gray-600 dark:text-gray-400">Calories</div>
+                        </div>
+                        <div class="text-center p-4 bg-purple-50 dark:bg-purple-900/20 rounded-xl">
+                            <div class="text-2xl font-bold text-purple-600" id="todayTokens">0.00</div>
+                            <div class="text-xs text-gray-600 dark:text-gray-400">Tokens</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GPS Tracking Section -->
+                <div class="glassmorphism rounded-2xl p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-bold">📍 GPS Tracking</h3>
+                        <div id="gpsAccuracy" class="text-xs text-gray-500">
+                            <i class="fas fa-crosshairs mr-1"></i>
+                            <span>No GPS</span>
+                        </div>
+                    </div>
+                    
+                    <div id="gpsMapContainer" class="w-full h-64 bg-gray-200 dark:bg-gray-700 rounded-xl mb-4 gps-map relative overflow-hidden">
+                        <div id="mapPlaceholder" class="w-full h-full flex items-center justify-center">
+                            <div class="text-center">
+                                <i class="fas fa-map text-4xl text-gray-400 mb-3"></i>
+                                <p class="text-gray-500 text-sm">GPS required for map</p>
+                                <p class="text-gray-400 text-xs">Enable location to start tracking</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-4 text-center mb-4">
+                        <div>
+                            <div id="currentSpeed" class="text-2xl font-bold text-primary">0.0</div>
+                            <div class="text-xs text-gray-600 dark:text-gray-400">Speed (km/h)</div>
+                        </div>
+                        <div>
+                            <div id="currentDistance" class="text-2xl font-bold text-green-500">0.00</div>
+                            <div class="text-xs text-gray-600 dark:text-gray-400">Distance (km)</div>
+                        </div>
+                        <div>
+                            <div id="workoutTime" class="text-2xl font-bold text-blue-500">00:00</div>
+                            <div class="text-xs text-gray-600 dark:text-gray-400">Time</div>
+                        </div>
+                    </div>
+                    
+                    <button id="startWorkoutBtn" class="w-full py-4 gradient-primary text-white rounded-xl font-bold text-lg transition-all hover:scale-105 haptic-feedback">
+                        🏃‍♂️ START WORKOUT
+                    </button>
+                </div>
+
+                <!-- Quick Goals -->
+                <div class="glassmorphism rounded-2xl p-6">
+                    <h3 class="text-lg font-bold mb-4">🎯 Daily Goals</h3>
+                    <div class="space-y-3" id="dailyGoals">
+                        <div class="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
+                            <span class="font-medium">🚶‍♂️ Walk 5km</span>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                    <div class="bg-green-500 h-2 rounded-full" style="width: 0%"></div>
+                                </div>
+                                <span class="text-green-500 font-bold text-sm">+10 FIXIE</span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
+                            <span class="font-medium">🚴‍♂️ Cycle 15km</span>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                    <div class="bg-blue-500 h-2 rounded-full" style="width: 0%"></div>
+                                </div>
+                                <span class="text-blue-500 font-bold text-sm">+25 FIXIE</span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
+                            <span class="font-medium">🏃‍♂️ Run 3km</span>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                    <div class="bg-red-500 h-2 rounded-full" style="width: 0%"></div>
+                                </div>
+                                <span class="text-red-500 font-bold text-sm">+15 FIXIE</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- DEFI VIEW -->
+            <div id="defiView" class="hidden px-4 py-6 space-y-6 max-w-full mx-auto view-transition">
+                
+                <!-- Portfolio Overview -->
+                <div class="glassmorphism rounded-2xl p-6">
+                    <h2 class="text-2xl font-bold mb-6">💰 DeFi Portfolio</h2>
+                    
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div class="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-xl">
+                            <div class="text-2xl font-bold text-green-600" id="portfolioValue">$0.00</div>
+                            <div class="text-xs text-gray-600 dark:text-gray-400">Total Value</div>
+                        </div>
+                        <div class="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
+                            <div class="text-2xl font-bold text-blue-600" id="stakingRewards">0.00</div>
+                            <div class="text-xs text-gray-600 dark:text-gray-400">Staking Rewards</div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center p-4 bg-gray-50 dark:bg-gray-800 rounded-xl">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-yellow-500 rounded-full flex items-center justify-center">
+                                    <span class="text-white font-bold text-sm">F</span>
+                                </div>
+                                <div>
+                                    <div class="font-semibold">FIXIE</div>
+                                    <div class="text-xs text-gray-600 dark:text-gray-400" id="fixieBalance">0.000</div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="font-semibold" id="fixieValue">$0.00</div>
+                                <div class="text-xs text-green-500">+0.00%</div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between items-center p-4 bg-gray-50 dark:bg-gray-800 rounded-xl">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+                                    <span class="text-white font-bold text-sm">E</span>
+                                </div>
+                                <div>
+                                    <div class="font-semibold">ETH</div>
+                                    <div class="text-xs text-gray-600 dark:text-gray-400" id="ethBalance">0.000</div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="font-semibold" id="ethValue">$0.00</div>
+                                <div class="text-xs text-red-500">-0.00%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Staking Interface -->
+                <div class="glassmorphism rounded-2xl p-6">
+                    <h3 class="text-lg font-bold mb-4">🔒 Staking</h3>
+                    
+                    <div id="stakingInterface" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Amount to Stake</label>
+                            <div class="relative">
+                                <input 
+                                    type="number" 
+                                    id="stakeAmount" 
+                                    placeholder="0.00" 
+                                    step="0.01"
+                                    class="input-focus w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 focus:ring-2 focus:ring-primary focus:border-transparent"
+                                >
+                                <div class="absolute right-3 top-3 text-sm text-gray-500">FIXIE</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-3">
+                            <button id="stakeBtn" class="py-3 gradient-primary text-white rounded-lg font-medium transition-transform hover:scale-105 haptic-feedback">
+                                Stake Tokens
+                            </button>
+                            <button id="unstakeBtn" class="py-3 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors haptic-feedback">
+                                Unstake
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-4 text-center mt-6">
+                            <div class="p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                                <div class="text-lg font-bold text-purple-600" id="stakedAmount">0.00</div>
+                                <div class="text-xs text-gray-600 dark:text-gray-400">Staked</div>
+                            </div>
+                            <div class="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                                <div class="text-lg font-bold text-green-600">12.5%</div>
+                                <div class="text-xs text-gray-600 dark:text-gray-400">APY</div>
+                            </div>
+                            <div class="p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+                                <div class="text-lg font-bold text-yellow-600" id="pendingRewards">0.000</div>
+                                <div class="text-xs text-gray-600 dark:text-gray-400">Pending</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DeFi News & Updates -->
+                <div class="glassmorphism rounded-2xl p-6">
+                    <h3 class="text-lg font-bold mb-4">📈 Market Updates</h3>
+                    <div class="space-y-3" id="marketUpdates">
+                        <div class="flex items-center justify-between p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                            <div>
+                                <div class="font-semibold text-green-800 dark:text-green-300">FIXIE Token Listed</div>
+                                <div class="text-xs text-green-600 dark:text-green-400">Now trading on DEX exchanges</div>
+                            </div>
+                            <div class="text-green-600 font-bold">+15%</div>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                            <div>
+                                <div class="font-semibold text-blue-800 dark:text-blue-300">Staking Rewards Increased</div>
+                                <div class="text-xs text-blue-600 dark:text-blue-400">APY raised to 12.5%</div>
+                            </div>
+                            <div class="text-blue-600 font-bold">NEW</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ANALYTICS VIEW -->
+            <div id="analyticsView" class="hidden px-4 py-6 space-y-6 max-w-full mx-auto view-transition">
+                
+                <!-- Stats Overview -->
+                <div class="glassmorphism rounded-2xl p-6">
+                    <h2 class="text-2xl font-bold mb-4">📊 Analytics Dashboard</h2>
+                    
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                        <div class="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
+                            <div class="text-xl font-bold text-blue-600" id="totalWorkouts">0</div>
+                            <div class="text-xs text-gray-600 dark:text-gray-400">Total Workouts</div>
+                        </div>
+                        <div class="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-xl">
+                            <div class="text-xl font-bold text-green-600" id="totalDistance">0.0</div>
+                            <div class="text-xs text-gray-600 dark:text-gray-400">Total km</div>
+                        </div>
+                        <div class="text-center p-4 bg-red-50 dark:bg-red-900/20 rounded-xl">
+                            <div class="text-xl font-bold text-red-600" id="totalCalories">0</div>
+                            <div class="text-xs text-gray-600 dark:text-gray-400">Calories Burned</div>
+                        </div>
+                        <div class="text-center p-4 bg-purple-50 dark:bg-purple-900/20 rounded-xl">
+                            <div class="text-xl font-bold text-purple-600" id="avgSpeed">0.0</div>
+                            <div class="text-xs text-gray-600 dark:text-gray-400">Avg Speed km/h</div>
+                        </div>
+                    </div>
+
+                    <!-- Chart Container -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-4">
+                        <canvas id="weeklyChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+
+                <!-- Personal Records -->
+                <div class="glassmorphism rounded-2xl p-6">
+                    <h3 class="text-lg font-bold mb-4">🏆 Personal Records</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="personalRecords">
+                        <div class="flex items-center justify-between p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 achievement-badge rounded-full flex items-center justify-center">
+                                    <i class="fas fa-trophy text-white text-sm"></i>
+                                </div>
+                                <div>
+                                    <div class="font-semibold">Longest Distance</div>
+                                    <div class="text-xs text-gray-600 dark:text-gray-400">Single workout</div>
+                                </div>
+                            </div>
+                            <div class="text-xl font-bold text-yellow-600" id="longestDistance">0.0 km</div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-tachometer-alt text-white text-sm"></i>
+                                </div>
+                                <div>
+                                    <div class="font-semibold">Fastest Speed</div>
+                                    <div class="text-xs text-gray-600 dark:text-gray-400">Maximum recorded</div>
+                                </div>
+                            </div>
+                            <div class="text-xl font-bold text-blue-600" id="fastestSpeed">0.0 km/h</div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-4 bg-green-50 dark:bg-green-900/20 rounded-xl">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-clock text-white text-sm"></i>
+                                </div>
+                                <div>
+                                    <div class="font-semibold">Longest Workout</div>
+                                    <div class="text-xs text-gray-600 dark:text-gray-400">Duration</div>
+                                </div>
+                            </div>
+                            <div class="text-xl font-bold text-green-600" id="longestWorkout">0:00</div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-4 bg-red-50 dark:bg-red-900/20 rounded-xl">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-fire text-white text-sm"></i>
+                                </div>
+                                <div>
+                                    <div class="font-semibold">Most Calories</div>
+                                    <div class="text-xs text-gray-600 dark:text-gray-400">Single session</div>
+                                </div>
+                            </div>
+                            <div class="text-xl font-bold text-red-600" id="mostCalories">0 cal</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activity Breakdown -->
+                <div class="glassmorphism rounded-2xl p-6">
+                    <h3 class="text-lg font-bold mb-4">📈 Monthly Progress</h3>
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-4">
+                        <canvas id="monthlyChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- WORKOUTS VIEW -->
+            <div id="workoutsView" class="hidden px-4 py-6 space-y-6 max-w-full mx-auto view-transition">
+                
+                <!-- Workout Categories -->
+                <div class="glassmorphism rounded-2xl p-6">
+                    <h2 class="text-2xl font-bold mb-4">🏃‍♂️ Workout Library</h2>
+                    
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <button class="workout-category p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors haptic-feedback" data-category="cycling">
+                            <div class="text-center">
+                                <i class="fas fa-bicycle text-3xl text-blue-600 mb-2"></i>
+                                <div class="font-semibold text-blue-800 dark:text-blue-300">Cycling</div>
+                                <div class="text-xs text-blue-600 dark:text-blue-400">Road & Mountain</div>
+                            </div>
+                        </button>
+                        
+                        <button class="workout-category p-4 bg-green-50 dark:bg-green-900/20 rounded-xl hover:bg-green-100 dark:hover:bg-green-900/40 transition-colors haptic-feedback" data-category="running">
+                            <div class="text-center">
+                                <i class="fas fa-running text-3xl text-green-600 mb-2"></i>
+                                <div class="font-semibold text-green-800 dark:text-green-300">Running</div>
+                                <div class="text-xs text-green-600 dark:text-green-400">Indoor & Outdoor</div>
+                            </div>
+                        </button>
+                        
+                        <button class="workout-category p-4 bg-purple-50 dark:bg-purple-900/20 rounded-xl hover:bg-purple-100 dark:hover:bg-purple-900/40 transition-colors haptic-feedback" data-category="walking">
+                            <div class="text-center">
+                                <i class="fas fa-walking text-3xl text-purple-600 mb-2"></i>
+                                <div class="font-semibold text-purple-800 dark:text-purple-300">Walking</div>
+                                <div class="text-xs text-purple-600 dark:text-purple-400">Leisure & Fitness</div>
+                            </div>
+                        </button>
+                        
+                        <button class="workout-category p-4 bg-orange-50 dark:bg-orange-900/20 rounded-xl hover:bg-orange-100 dark:hover:bg-orange-900/40 transition-colors haptic-feedback" data-category="custom">
+                            <div class="text-center">
+                                <i class="fas fa-plus text-3xl text-orange-600 mb-2"></i>
+                                <div class="font-semibold text-orange-800 dark:text-orange-300">Custom</div>
+                                <div class="text-xs text-orange-600 dark:text-orange-400">Create Your Own</div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Workout History -->
+                <div class="glassmorphism rounded-2xl p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-bold">📅 Recent Workouts</h3>
+                        <button id="clearHistoryBtn" class="text-red-500 text-sm hover:text-red-600 haptic-feedback">
+                            Clear All
+                        </button>
+                    </div>
+                    <div id="workoutHistory" class="space-y-3">
+                        <div class="text-center py-8 text-gray-500 dark:text-gray-400">
+                            <i class="fas fa-clock text-3xl mb-2 opacity-50"></i>
+                            <p class="font-medium">No workouts yet</p>
+                            <p class="text-sm">Start your first session!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Planned Workouts -->
+                <div class="glassmorphism rounded-2xl p-6">
+                    <h3 class="text-lg font-bold mb-4">🗓️ Planned Workouts</h3>
+                    <div class="space-y-3" id="plannedWorkouts">
+                        <div class="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-bicycle text-white text-sm"></i>
+                                </div>
+                                <div>
+                                    <div class="font-semibold">Morning Cycle</div>
+                                    <div class="text-xs text-gray-600 dark:text-gray-400">Tomorrow 7:00 AM</div>
+                                </div>
+                            </div>
+                            <button class="text-blue-600 text-sm font-medium haptic-feedback">Start Now</button>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-3 bg-green-50 dark:bg-green-900/20 rounded-xl">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-running text-white text-sm"></i>
+                                </div>
+                                <div>
+                                    <div class="font-semibold">Evening Run</div>
+                                    <div class="text-xs text-gray-600 dark:text-gray-400">Today 6:00 PM</div>
+                                </div>
+                            </div>
+                            <button class="text-green-600 text-sm font-medium haptic-feedback">Start Now</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- REWARDS VIEW -->
+            <div id="rewardsView" class="hidden px-4 py-6 space-y-6 max-w-full mx-auto view-transition">
+                
+                <!-- Rewards Overview -->
+                <div class="glassmorphism rounded-2xl p-6">
+                    <h2 class="text-2xl font-bold mb-6">🎁 Rewards Center</h2>
+                    
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div class="text-center p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl">
+                            <div class="text-2xl font-bold text-yellow-600" id="totalRewards">0</div>
+                            <div class="text-xs text-gray-600 dark:text-gray-400">Total Rewards</div>
+                        </div>
+                        <div class="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-xl">
+                            <div class="text-2xl font-bold text-green-600" id="currentStreak">0</div>
+                            <div class="text-xs text-gray-600 dark:text-gray-400">Day Streak</div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span class="font-medium">Next Level Progress</span>
+                            <span class="text-sm text-gray-500">Level <span id="currentLevel">1</span></span>
+                        </div>
+                        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
+                            <div id="levelProgress" class="bg-gradient-to-r from-blue-500 to-purple-600 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                        <div class="text-xs text-gray-600 dark:text-gray-400 text-center">
+                            <span id="currentXP">0</span> / <span id="nextLevelXP">100</span> XP
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Available Rewards -->
+                <div class="glassmorphism rounded-2xl p-6">
+                    <h3 class="text-lg font-bold mb-4">🏆 Available Rewards</h3>
+                    <div class="space-y-3" id="availableRewards">
+                        <div class="flex items-center justify-between p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-12 h-12 achievement-badge rounded-full flex items-center justify-center">
+                                    <i class="fas fa-medal text-white"></i>
+                                </div>
+                                <div>
+                                    <div class="font-semibold">First Workout Badge</div>
+                                    <div class="text-xs text-gray-600 dark:text-gray-400">Complete your first workout</div>
+                                </div>
+                            </div>
+                            <button class="px-4 py-2 bg-yellow-500 text-white rounded-lg text-sm font-medium haptic-feedback">
+                                Claim
+                            </button>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-4 bg-green-50 dark:bg-green-900/20 rounded-xl opacity-50">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-12 h-12 bg-gray-400 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-lock text-white"></i>
+                                </div>
+                                <div>
+                                    <div class="font-semibold">5km Champion</div>
+                                    <div class="text-xs text-gray-600 dark:text-gray-400">Complete 5km in one workout</div>
+                                </div>
+                            </div>
+                            <span class="text-gray-500 text-sm">Locked</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl opacity-50">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-12 h-12 bg-gray-400 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-calendar text-white"></i>
+                                </div>
+                                <div>
+                                    <div class="font-semibold">Week Warrior</div>
+                                    <div class="text-xs text-gray-600 dark:text-gray-400">7 day workout streak</div>
+                                </div>
+                            </div>
+                            <span class="text-gray-500 text-sm">Locked</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Leaderboard -->
+                <div class="glassmorphism rounded-2xl p-6">
+                    <h3 class="text-lg font-bold mb-4">🥇 Leaderboard</h3>
+                    <div class="space-y-3" id="leaderboard">
+                        <div class="flex items-center justify-between p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
+                                    <span class="text-white font-bold text-sm">1</span>
+                                </div>
+                                <div>
+                                    <div class="font-semibold">CycleKing</div>
+                                    <div class="text-xs text-gray-600 dark:text-gray-400">1,245 FIXIE</div>
+                                </div>
+                            </div>
+                            <div class="text-yellow-600 font-bold">👑</div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center">
+                                    <span class="text-white font-bold text-sm">2</span>
+                                </div>
+                                <div>
+                                    <div class="font-semibold">RunnerPro</div>
+                                    <div class="text-xs text-gray-600 dark:text-gray-400">987 FIXIE</div>
+                                </div>
+                            </div>
+                            <div class="text-gray-500 font-bold">🥈</div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-3 bg-orange-50 dark:bg-orange-900/20 rounded-xl">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
+                                    <span class="text-white font-bold text-sm">3</span>
+                                </div>
+                                <div>
+                                    <div class="font-semibold">FitnessQueen</div>
+                                    <div class="text-xs text-gray-600 dark:text-gray-400">756 FIXIE</div>
+                                </div>
+                            </div>
+                            <div class="text-orange-500 font-bold">🥉</div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl border-2 border-blue-500">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                                    <span class="text-white font-bold text-sm">47</span>
+                                </div>
+                                <div>
+                                    <div class="font-semibold">You</div>
+                                    <div class="text-xs text-gray-600 dark:text-gray-400" id="yourTokens">0 FIXIE</div>
+                                </div>
+                            </div>
+                            <div class="text-blue-500 font-bold">💪</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- PROFILE VIEW -->
+            <div id="profileView" class="hidden px-4 py-6 space-y-6 max-w-full mx-auto view-transition">
+                
+                <!-- User Profile -->
+                <div class="glassmorphism rounded-2xl p-6">
+                    <div class="flex items-center space-x-4 mb-6">
+                        <div class="w-20 h-20 bg-gradient-to-br from-primary to-primary-dark rounded-full flex items-center justify-center">
+                            <span class="text-white text-2xl font-bold" id="profileInitials">U</span>
+                        </div>
+                        <div class="flex-1">
+                            <h2 class="text-2xl font-bold" id="profileName">User</h2>
+                            <p class="text-gray-600 dark:text-gray-400" id="profileEmail">user@example.com</p>
+                            <div class="flex items-center space-x-2 mt-2">
+                                <span class="px-2 py-1 bg-primary text-white rounded-full text-xs">Level <span id="profileLevel">1</span></span>
+                                <span class="px-2 py-1 bg-green-500 text-white rounded-full text-xs">Active</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-4 text-center">
+                        <div class="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
+                            <div class="text-xl font-bold text-blue-600" id="profileWorkouts">0</div>
+                            <div class="text-xs text-gray-600 dark:text-gray-400">Workouts</div>
+                        </div>
+                        <div class="p-3 bg-green-50 dark:bg-green-900/20 rounded-xl">
+                            <div class="text-xl font-bold text-green-600" id="profileDistance">0.0</div>
+                            <div class="text-xs text-gray-600 dark:text-gray-400">Total km</div>
+                        </div>
+                        <div class="p-3 bg-purple-50 dark:bg-purple-900/20 rounded-xl">
+                            <div class="text-xl font-bold text-purple-600" id="profileTokens">0</div>
+                            <div class="text-xs text-gray-600 dark:text-gray-400">FIXIE</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings -->
+                <div class="glassmorphism rounded-2xl p-6">
+                    <h3 class="text-lg font-bold mb-4">⚙️ Settings</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-bell text-gray-600"></i>
+                                <span class="font-medium">Notifications</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer" id="notificationsToggle">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                            </label>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-moon text-gray-600"></i>
+                                <span class="font-medium">Dark Mode</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer" id="darkModeToggle">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                            </label>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-satellite-dish text-gray-600"></i>
+                                <span class="font-medium">GPS Auto-start</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer" id="gpsToggle" checked>
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fitness Service Integrations -->
+                <div class="glassmorphism rounded-2xl p-6">
+                    <h3 class="text-lg font-bold mb-4">🔗 Connected Services</h3>
+                    <div class="space-y-3" id="connectedServices">
+                        
+                        <!-- Apple HealthKit -->
+                        <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-black rounded-lg flex items-center justify-center">
+                                    <i class="fab fa-apple text-white"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium">Apple HealthKit</div>
+                                    <div class="text-xs text-gray-600 dark:text-gray-400" id="healthkit-status">Not connected</div>
+                                </div>
+                            </div>
+                            <button id="connectHealthKit" class="px-3 py-1.5 bg-blue-500 text-white rounded-lg text-sm haptic-feedback">
+                                Connect
+                            </button>
+                        </div>
+
+                        <!-- Strava -->
+                        <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center">
+                                    <i class="fab fa-strava text-white"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium">Strava</div>
+                                    <div class="text-xs text-gray-600 dark:text-gray-400" id="strava-status">Not connected</div>
+                                </div>
+                            </div>
+                            <button id="connectStrava" class="px-3 py-1.5 bg-orange-500 text-white rounded-lg text-sm haptic-feedback">
+                                Connect
+                            </button>
+                        </div>
+
+                        <!-- Google Fit -->
+                        <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                                    <i class="fab fa-google text-white"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium">Google Fit</div>
+                                    <div class="text-xs text-gray-600 dark:text-gray-400" id="googlefit-status">Not connected</div>
+                                </div>
+                            </div>
+                            <button id="connectGoogleFit" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-sm haptic-feedback">
+                                Connect
+                            </button>
+                        </div>
+
+                        <!-- Fitbit -->
+                        <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-teal-500 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-heartbeat text-white"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium">Fitbit</div>
+                                    <div class="text-xs text-gray-600 dark:text-gray-400" id="fitbit-status">Not connected</div>
+                                </div>
+                            </div>
+                            <button id="connectFitbit" class="px-3 py-1.5 bg-teal-500 text-white rounded-lg text-sm haptic-feedback">
+                                Connect
+                            </button>
+                        </div>
+
+                        <!-- Garmin Connect -->
+                        <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-blue-800 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-satellite text-white"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium">Garmin Connect</div>
+                                    <div class="text-xs text-gray-600 dark:text-gray-400" id="garmin-status">Not connected</div>
+                                </div>
+                            </div>
+                            <button id="connectGarmin" class="px-3 py-1.5 bg-blue-800 text-white rounded-lg text-sm haptic-feedback">
+                                Connect
+                            </button>
+                        </div>
+
+                        <!-- Samsung Health -->
+                        <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
+                                    <i class="fab fa-android text-white"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium">Samsung Health</div>
+                                    <div class="text-xs text-gray-600 dark:text-gray-400" id="samsung-status">Not connected</div>
+                                </div>
+                            </div>
+                            <button id="connectSamsung" class="px-3 py-1.5 bg-purple-600 text-white rounded-lg text-sm haptic-feedback">
+                                Connect
+                            </button>
+                        </div>
+
+                        <!-- Polar Flow -->
+                        <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-snowflake text-white"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium">Polar Flow</div>
+                                    <div class="text-xs text-gray-600 dark:text-gray-400" id="polar-status">Not connected</div>
+                                </div>
+                            </div>
+                            <button id="connectPolar" class="px-3 py-1.5 bg-red-600 text-white rounded-lg text-sm haptic-feedback">
+                                Connect
+                            </button>
+                        </div>
+
+                        <!-- Suunto -->
+                        <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-gray-700 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-compass text-white"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium">Suunto</div>
+                                    <div class="text-xs text-gray-600 dark:text-gray-400" id="suunto-status">Not connected</div>
+                                </div>
+                            </div>
+                            <button id="connectSuunto" class="px-3 py-1.5 bg-gray-700 text-white rounded-lg text-sm haptic-feedback">
+                                Connect
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Data Sync Settings -->
+                <div class="glassmorphism rounded-2xl p-6">
+                    <h3 class="text-lg font-bold mb-4">🔄 Data Synchronization</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-sync text-blue-600"></i>
+                                <span class="font-medium">Auto Sync</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer" id="autoSyncToggle" checked>
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                            </label>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-upload text-green-600"></i>
+                                <span class="font-medium">Upload to Services</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer" id="uploadToggle" checked>
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                            </label>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-download text-purple-600"></i>
+                                <span class="font-medium">Import Activities</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer" id="importToggle">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                            </label>
+                        </div>
+
+                        <button id="syncNowBtn" class="w-full py-3 bg-primary text-white rounded-xl font-medium haptic-feedback">
+                            <i class="fas fa-sync mr-2"></i>
+                            Sync All Services Now
+                        </button>
+                        
+                        <div class="text-center">
+                            <p class="text-xs text-gray-600 dark:text-gray-400" id="lastSyncTime">Last sync: Never</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Account Actions -->
+                <div class="glassmorphism rounded-2xl p-6">
+                    <h3 class="text-lg font-bold mb-4">👤 Account</h3>
+                    <div class="space-y-3">
+                        <button id="editProfileBtn" class="w-full flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors haptic-feedback">
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-edit text-blue-600"></i>
+                                <span class="font-medium">Edit Profile</span>
+                            </div>
+                            <i class="fas fa-chevron-right text-gray-400"></i>
+                        </button>
+                        
+                        <button id="exportDataBtn" class="w-full flex items-center justify-between p-3 bg-green-50 dark:bg-green-900/20 rounded-xl hover:bg-green-100 dark:hover:bg-green-900/40 transition-colors haptic-feedback">
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-download text-green-600"></i>
+                                <span class="font-medium">Export Data</span>
+                            </div>
+                            <i class="fas fa-chevron-right text-gray-400"></i>
+                        </button>
+                        
+                        <button id="helpSupportBtn" class="w-full flex items-center justify-between p-3 bg-orange-50 dark:bg-orange-900/20 rounded-xl hover:bg-orange-100 dark:hover:bg-orange-900/40 transition-colors haptic-feedback">
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-question-circle text-orange-600"></i>
+                                <span class="font-medium">Help & Support</span>
+                            </div>
+                            <i class="fas fa-chevron-right text-gray-400"></i>
+                        </button>
+                        
+                        <button id="logoutBtn" class="w-full flex items-center justify-between p-3 bg-red-50 dark:bg-red-900/20 rounded-xl hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors haptic-feedback">
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-sign-out-alt text-red-600"></i>
+                                <span class="font-medium">Logout</span>
+                            </div>
+                            <i class="fas fa-chevron-right text-gray-400"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- App Info -->
+                <div class="glassmorphism rounded-2xl p-6">
+                    <h3 class="text-lg font-bold mb-4">ℹ️ App Information</h3>
+                    <div class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                        <div class="flex justify-between">
+                            <span>Version</span>
+                            <span>1.0.0</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Build</span>
+                            <span>2024.01.15</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Platform</span>
+                            <span>PWA</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="fixed bottom-0 left-0 right-0 glassmorphism border-t border-gray-200 dark:border-gray-700 safe-bottom">
+            <div class="grid grid-cols-6 py-2">
+                <button class="nav-btn flex flex-col items-center py-3 text-primary haptic-feedback" data-view="home">
+                    <i class="fas fa-home text-lg mb-1"></i>
+                    <span class="text-xs font-medium">Home</span>
+                </button>
+                <button class="nav-btn flex flex-col items-center py-3 text-gray-500 haptic-feedback" data-view="defi">
+                    <i class="fas fa-coins text-lg mb-1"></i>
+                    <span class="text-xs font-medium">DeFi</span>
+                </button>
+                <button class="nav-btn flex flex-col items-center py-3 text-gray-500 haptic-feedback" data-view="analytics">
+                    <i class="fas fa-chart-line text-lg mb-1"></i>
+                    <span class="text-xs font-medium">Analytics</span>
+                </button>
+                <button class="nav-btn flex flex-col items-center py-3 text-gray-500 haptic-feedback" data-view="workouts">
+                    <i class="fas fa-dumbbell text-lg mb-1"></i>
+                    <span class="text-xs font-medium">Workouts</span>
+                </button>
+                <button class="nav-btn flex flex-col items-center py-3 text-gray-500 haptic-feedback" data-view="rewards">
+                    <i class="fas fa-gift text-lg mb-1"></i>
+                    <span class="text-xs font-medium">Rewards</span>
+                </button>
+                <button class="nav-btn flex flex-col items-center py-3 text-gray-500 haptic-feedback" data-view="profile">
+                    <i class="fas fa-user text-lg mb-1"></i>
+                    <span class="text-xs font-medium">Profile</span>
+                </button>
+            </div>
+        </nav>
+
+    </div>
+
+    <!-- Notifications -->
+    <div id="notification" class="hidden fixed top-24 left-4 right-4 glassmorphism rounded-lg p-4 z-50">
+        <div class="flex items-center space-x-3">
+            <div id="notificationIcon" class="w-6 h-6 rounded-full flex items-center justify-center">
+                <i class="fas fa-check text-white text-xs"></i>
+            </div>
+            <div class="flex-1">
+                <p id="notificationTitle" class="text-sm font-medium"></p>
+                <p id="notificationMessage" class="text-xs text-gray-600 dark:text-gray-400"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fullscreen Workout Mode -->
+    <div id="workoutMode" class="hidden workout-mode">
+        <div class="flex flex-col h-full justify-center items-center p-8 text-center">
+            
+            <div class="mb-8">
+                <h1 class="text-2xl font-bold mb-2">🏃‍♂️ WORKOUT ACTIVE</h1>
+                <div id="workoutTimer" class="text-4xl font-mono font-black workout-metrics">00:00:00</div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-8 w-full max-w-md mb-8">
+                <div class="text-center">
+                    <div id="workoutSpeedLive" class="workout-metrics">0.0</div>
+                    <div class="workout-secondary">km/h</div>
+                </div>
+                <div class="text-center">
+                    <div id="workoutDistanceLive" class="workout-metrics">0.00</div>
+                    <div class="workout-secondary">km</div>
+                </div>
+            </div>
+
+            <div id="workoutMapContainer" class="w-full h-48 bg-gray-800 rounded-2xl mb-8 overflow-hidden">
+                <div class="w-full h-full flex items-center justify-center">
+                    <div class="text-white/60">
+                        <i class="fas fa-map text-2xl mb-2"></i>
+                        <p class="text-sm">GPS Map</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex space-x-4 w-full max-w-md">
+                <button id="pauseWorkoutBtn" class="flex-1 py-4 bg-yellow-500 text-black rounded-xl font-bold haptic-feedback">
+                    ⏸️ PAUSE
+                </button>
+                <button id="stopWorkoutBtn" class="flex-1 py-4 bg-red-500 text-white rounded-xl font-bold haptic-feedback">
+                    ⏹️ STOP
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+        <div class="text-center text-white">
+            <div class="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p class="text-lg font-medium">Loading...</p>
+        </div>
+    </div>
+
+    <script>
+        // 🚀 COMPLETE FIXIERUN PWA - ALL SECTIONS
+        class FixieRunPWA {
+            constructor() {
+                this.state = {
+                    currentView: 'home',
+                    workoutActive: false,
+                    gpsEnabled: false,
+                    currentPosition: null,
+                    workoutData: {
+                        startTime: null,
+                        duration: 0,
+                        distance: 0,
+                        speed: 0,
+                        maxSpeed: 0,
+                        coordinates: [],
+                        calories: 0,
+                        tokens: 0
+                    },
+                    todayStats: {
+                        distance: 0,
+                        duration: 0,
+                        calories: 0,
+                        tokens: 0
+                    },
+                    totalTokens: 0,
+                    workoutHistory: [],
+                    personalRecords: {
+                        longestDistance: 0,
+                        fastestSpeed: 0,
+                        longestWorkout: 0,
+                        mostCalories: 0
+                    },
+                    userProfile: {
+                        name: 'User',
+                        email: 'user@example.com',
+                        level: 1,
+                        xp: 0
+                    },
+                    rewards: {
+                        totalRewards: 0,
+                        currentStreak: 0,
+                        achievements: []
+                    },
+                    settings: {
+                        notifications: true,
+                        darkMode: false,
+                        gpsAutoStart: true
+                    }
+                };
+                
+                this.watchId = null;
+                this.workoutInterval = null;
+                this.map = null;
+                this.marker = null;
+                this.path = null;
+                this.wakeLock = null;
+                this.charts = {};
+                
+                this.init();
+            }
+
+            async init() {
+                this.setupTheme();
+                this.setupEventListeners();
+                this.updateConnectionStatus();
+                this.loadUserData();
+                this.setupPWA();
+                
+                // Initialize GPS
+                await this.initializeGPS();
+                
+                // Initialize charts
+                this.initializeCharts();
+                
+                // Update all UIs
+                this.updateAllUIs();
+            }
+
+            setupPWA() {
+                // Register service worker
+                this.registerServiceWorker();
+                
+                // Handle install prompt
+                window.addEventListener('beforeinstallprompt', (e) => {
+                    e.preventDefault();
+                    this.showInstallPrompt = e;
+                });
+                
+                // Handle PWA installed
+                window.addEventListener('appinstalled', () => {
+                    this.showNotification('success', 'App Installed!', 'FixieRun is now installed on your device');
+                });
+            }
+
+            async registerServiceWorker() {
+                if ('serviceWorker' in navigator && window.location.origin !== 'null') {
+                    try {
+                        const registration = await navigator.serviceWorker.register(
+                            'data:text/javascript,' + encodeURIComponent(`
+                                const CACHE_NAME = 'fixierun-v1';
+                                const urlsToCache = [
+                                    '/',
+                                    'https://cdn.tailwindcss.com',
+                                    'https://kit.fontawesome.com/a076d05399.js',
+                                    'https://cdn.jsdelivr.net/npm/chart.js',
+                                    'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
+                                    'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'
+                                ];
+
+                                self.addEventListener('install', (event) => {
+                                    event.waitUntil(
+                                        caches.open(CACHE_NAME)
+                                            .then((cache) => cache.addAll(urlsToCache))
+                                    );
+                                });
+
+                                self.addEventListener('fetch', (event) => {
+                                    event.respondWith(
+                                        caches.match(event.request)
+                                            .then((response) => {
+                                                return response || fetch(event.request);
+                                            })
+                                    );
+                                });
+                            `)
+                        );
+                        console.log('✅ Service Worker registered');
+                    } catch (error) {
+                        console.log('❌ Service Worker registration failed:', error);
+                    }
+                }
+            }
+
+            loadUserData() {
+                try {
+                    const savedData = localStorage.getItem('fixierun_data');
+                    if (savedData) {
+                        const data = JSON.parse(savedData);
+                        this.state = { ...this.state, ...data };
+                    }
+                } catch (error) {
+                    console.log('No saved data found');
+                }
+            }
+
+            saveUserData() {
+                try {
+                    localStorage.setItem('fixierun_data', JSON.stringify({
+                        todayStats: this.state.todayStats,
+                        totalTokens: this.state.totalTokens,
+                        workoutHistory: this.state.workoutHistory,
+                        personalRecords: this.state.personalRecords,
+                        userProfile: this.state.userProfile,
+                        rewards: this.state.rewards,
+                        settings: this.state.settings,
+                        lastSaved: Date.now()
+                    }));
+                } catch (error) {
+                    console.error('Failed to save data:', error);
+                }
+            }
+
+            async initializeGPS() {
+                console.log('📍 Initializing GPS system...');
+                
+                try {
+                    if (!navigator.geolocation) {
+                        throw new Error('Geolocation not supported');
+                    }
+
+                    this.updateGPSStatus('searching', 'Requesting GPS access...');
+                    const position = await this.getCurrentPosition();
+                    
+                    this.state.gpsEnabled = true;
+                    this.state.currentPosition = position.coords;
+                    
+                    this.updateGPSStatus('active', `GPS active - Accuracy: ±${Math.round(position.coords.accuracy)}m`);
+                    this.initializeMap(position.coords.latitude, position.coords.longitude);
+                    this.startGPSTracking();
+                    
+                } catch (error) {
+                    console.error('❌ GPS failed:', this.getErrorMessage(error));
+                    this.handleGPSError(error);
+                }
+            }
+
+            getCurrentPosition() {
+                return new Promise((resolve, reject) => {
+                    navigator.geolocation.getCurrentPosition(resolve, reject, {
+                        enableHighAccuracy: true,
+                        timeout: 15000,
+                        maximumAge: 30000
+                    });
+                });
+            }
+
+            startGPSTracking() {
+                this.watchId = navigator.geolocation.watchPosition(
+                    (position) => this.handleGPSUpdate(position),
+                    (error) => this.handleGPSError(error),
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 5000
+                    }
+                );
+            }
+
+            handleGPSUpdate(position) {
+                const coords = position.coords;
+                this.state.currentPosition = coords;
+                
+                document.getElementById('gpsAccuracy').innerHTML = `
+                    <i class="fas fa-crosshairs mr-1"></i>
+                    <span>±${Math.round(coords.accuracy)}m</span>
+                `;
+
+                if (this.map && this.marker) {
+                    const newPos = [coords.latitude, coords.longitude];
+                    this.marker.setLatLng(newPos);
+                    this.map.setView(newPos);
+                }
+
+                if (coords.speed !== null && coords.speed >= 0) {
+                    const speedKmh = coords.speed * 3.6;
+                    document.getElementById('currentSpeed').textContent = speedKmh.toFixed(1);
+                    
+                    if (this.state.workoutActive) {
+                        this.state.workoutData.speed = speedKmh;
+                        if (speedKmh > this.state.workoutData.maxSpeed) {
+                            this.state.workoutData.maxSpeed = speedKmh;
+                        }
+                    }
+                }
+
+                if (this.state.workoutActive) {
+                    this.processWorkoutMovement(coords);
+                }
+            }
+
+            processWorkoutMovement(coords) {
+                const lastCoord = this.state.workoutData.coordinates[this.state.workoutData.coordinates.length - 1];
+                
+                if (lastCoord) {
+                    const distance = this.calculateDistance(
+                        lastCoord.latitude, lastCoord.longitude,
+                        coords.latitude, coords.longitude
+                    );
+                    
+                    if (distance > 3 && coords.accuracy < 50) {
+                        this.state.workoutData.distance += distance / 1000;
+                        this.state.workoutData.coordinates.push({
+                            latitude: coords.latitude,
+                            longitude: coords.longitude,
+                            timestamp: Date.now(),
+                            accuracy: coords.accuracy
+                        });
+
+                        if (this.path) {
+                            this.path.addLatLng([coords.latitude, coords.longitude]);
+                        }
+                    }
+                } else {
+                    this.state.workoutData.coordinates.push({
+                        latitude: coords.latitude,
+                        longitude: coords.longitude,
+                        timestamp: Date.now(),
+                        accuracy: coords.accuracy
+                    });
+                }
+            }
+
+            calculateDistance(lat1, lon1, lat2, lon2) {
+                const R = 6371000;
+                const φ1 = lat1 * Math.PI / 180;
+                const φ2 = lat2 * Math.PI / 180;
+                const Δφ = (lat2 - lat1) * Math.PI / 180;
+                const Δλ = (lon2 - lon1) * Math.PI / 180;
+
+                const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+                        Math.cos(φ1) * Math.cos(φ2) *
+                        Math.sin(Δλ/2) * Math.sin(Δλ/2);
+                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+                return R * c;
+            }
+
+            getErrorMessage(error) {
+                if (error.message) return error.message;
+                if (error.code !== undefined) {
+                    switch(error.code) {
+                        case 1: return 'Permission denied';
+                        case 2: return 'Position unavailable';
+                        case 3: return 'Timeout';
+                        default: return `GPS error code: ${error.code}`;
+                    }
+                }
+                return 'Unknown GPS error';
+            }
+
+            handleGPSError(error) {
+                let message = 'GPS Error';
+                switch(error.code) {
+                    case error.PERMISSION_DENIED:
+                        message = 'GPS permission denied';
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        message = 'GPS signal unavailable';
+                        break;
+                    case error.TIMEOUT:
+                        message = 'GPS timeout';
+                        break;
+                }
+                
+                this.updateGPSStatus('error', message);
+                this.state.gpsEnabled = false;
+            }
+
+            updateGPSStatus(status, message) {
+                const indicator = document.getElementById('gpsIndicator');
+                const statusText = document.getElementById('gpsStatusText');
+                
+                indicator.className = `text-center py-2 text-white text-sm font-medium gps-${status}`;
+                statusText.textContent = message;
+            }
+
+            async initializeMap(lat, lng) {
+                try {
+                    const mapContainer = document.getElementById('gpsMapContainer');
+                    mapContainer.innerHTML = '';
+                    
+                    this.map = L.map(mapContainer, {
+                        center: [lat, lng],
+                        zoom: 16,
+                        zoomControl: false,
+                        attributionControl: false
+                    });
+
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(this.map);
+                    this.marker = L.marker([lat, lng]).addTo(this.map);
+                    
+                    this.path = L.polyline([], {
+                        color: '#5D5CDE',
+                        weight: 4,
+                        opacity: 0.8
+                    }).addTo(this.map);
+
+                    console.log('✅ Map initialized');
+                    
+                } catch (error) {
+                    console.error('❌ Map initialization failed:', error);
+                }
+            }
+
+            // VIEW MANAGEMENT
+            switchView(viewName) {
+                // Hide all views
+                const views = ['home', 'defi', 'analytics', 'workouts', 'rewards', 'profile'];
+                views.forEach(view => {
+                    const viewEl = document.getElementById(`${view}View`);
+                    if (viewEl) {
+                        viewEl.classList.add('hidden');
+                    }
+                });
+                
+                // Show target view
+                const targetView = document.getElementById(`${viewName}View`);
+                if (targetView) {
+                    targetView.classList.remove('hidden');
+                }
+                
+                // Update navigation
+                document.querySelectorAll('.nav-btn').forEach(btn => {
+                    btn.classList.remove('text-primary');
+                    btn.classList.add('text-gray-500');
+                });
+                
+                const activeBtn = document.querySelector(`[data-view="${viewName}"]`);
+                if (activeBtn) {
+                    activeBtn.classList.remove('text-gray-500');
+                    activeBtn.classList.add('text-primary');
+                }
+                
+                this.state.currentView = viewName;
+                
+                // Update view-specific data
+                this.updateViewData(viewName);
+            }
+
+            updateViewData(viewName) {
+                switch(viewName) {
+                    case 'analytics':
+                        this.updateAnalytics();
+                        break;
+                    case 'defi':
+                        this.updateDeFiData();
+                        break;
+                    case 'rewards':
+                        this.updateRewards();
+                        break;
+                    case 'profile':
+                        this.updateProfile();
+                        break;
+                }
+            }
+
+            // WORKOUT MANAGEMENT
+            async startWorkout() {
+                if (!this.state.gpsEnabled) {
+                    this.showNotification('error', 'GPS Required', 'Please enable GPS to start workout');
+                    return;
+                }
+
+                this.state.workoutActive = true;
+                this.state.workoutData = {
+                    startTime: Date.now(),
+                    duration: 0,
+                    distance: 0,
+                    speed: 0,
+                    maxSpeed: 0,
+                    coordinates: [],
+                    calories: 0,
+                    tokens: 0
+                };
+
+                await this.requestWakeLock();
+                this.enterWorkoutMode();
+                this.startWorkoutTimer();
+                this.vibrate([200, 100, 200]);
+                
+                this.showNotification('success', 'Workout Started!', 'GPS tracking active');
+            }
+
+            async requestWakeLock() {
+                try {
+                    if ('wakeLock' in navigator) {
+                        this.wakeLock = await navigator.wakeLock.request('screen');
+                    }
+                } catch (error) {
+                    console.log('Wake lock failed:', error);
+                }
+            }
+
+            enterWorkoutMode() {
+                document.getElementById('workoutMode').classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+                
+                setTimeout(() => {
+                    this.initializeWorkoutMap();
+                }, 500);
+            }
+
+            initializeWorkoutMap() {
+                const workoutMapContainer = document.getElementById('workoutMapContainer');
+                if (!this.state.currentPosition || !workoutMapContainer) return;
+
+                try {
+                    workoutMapContainer.innerHTML = '';
+                    
+                    this.workoutMap = L.map(workoutMapContainer, {
+                        center: [this.state.currentPosition.latitude, this.state.currentPosition.longitude],
+                        zoom: 18,
+                        zoomControl: false,
+                        attributionControl: false
+                    });
+
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(this.workoutMap);
+                    
+                    this.workoutMarker = L.marker([this.state.currentPosition.latitude, this.state.currentPosition.longitude]).addTo(this.workoutMap);
+                    this.workoutPath = L.polyline([], { color: '#10B981', weight: 6 }).addTo(this.workoutMap);
+                    
+                } catch (error) {
+                    console.error('Workout map error:', error);
+                }
+            }
+
+            startWorkoutTimer() {
+                this.workoutInterval = setInterval(() => {
+                    if (!this.state.workoutActive) return;
+                    
+                    this.state.workoutData.duration = Math.floor((Date.now() - this.state.workoutData.startTime) / 1000);
+                    
+                    const durationMinutes = this.state.workoutData.duration / 60;
+                    const avgSpeed = this.state.workoutData.distance > 0 ? 
+                        (this.state.workoutData.distance / (this.state.workoutData.duration / 3600)) : 0;
+                    
+                    this.state.workoutData.calories = Math.floor(durationMinutes * 8 * (1 + avgSpeed * 0.1));
+                    this.state.workoutData.tokens = (this.state.workoutData.distance * 0.5) + (durationMinutes * 0.01);
+                    
+                    this.updateWorkoutUI();
+                }, 1000);
+            }
+
+            updateWorkoutUI() {
+                const duration = this.state.workoutData.duration;
+                const hours = Math.floor(duration / 3600);
+                const minutes = Math.floor((duration % 3600) / 60);
+                const seconds = duration % 60;
+                
+                document.getElementById('workoutTimer').textContent = 
+                    `${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+                
+                document.getElementById('workoutSpeedLive').textContent = this.state.workoutData.speed.toFixed(1);
+                document.getElementById('workoutDistanceLive').textContent = this.state.workoutData.distance.toFixed(2);
+                
+                document.getElementById('currentDistance').textContent = this.state.workoutData.distance.toFixed(2);
+                document.getElementById('workoutTime').textContent = `${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+            }
+
+            stopWorkout() {
+                this.state.workoutActive = false;
+                clearInterval(this.workoutInterval);
+                
+                if (this.wakeLock) {
+                    this.wakeLock.release();
+                    this.wakeLock = null;
+                }
+                
+                this.exitWorkoutMode();
+                this.saveWorkoutData();
+                this.showWorkoutSummary();
+                this.vibrate([100, 50, 100]);
+            }
+
+            saveWorkoutData() {
+                const workout = {
+                    ...this.state.workoutData,
+                    endTime: Date.now(),
+                    date: new Date().toISOString().split('T')[0]
+                };
+                
+                // Update today's stats
+                this.state.todayStats.distance += workout.distance;
+                this.state.todayStats.duration += workout.duration;
+                this.state.todayStats.calories += workout.calories;
+                this.state.todayStats.tokens += workout.tokens;
+                
+                // Update total tokens
+                this.state.totalTokens += workout.tokens;
+                
+                // Update personal records
+                if (workout.distance > this.state.personalRecords.longestDistance) {
+                    this.state.personalRecords.longestDistance = workout.distance;
+                }
+                if (workout.maxSpeed > this.state.personalRecords.fastestSpeed) {
+                    this.state.personalRecords.fastestSpeed = workout.maxSpeed;
+                }
+                if (workout.duration > this.state.personalRecords.longestWorkout) {
+                    this.state.personalRecords.longestWorkout = workout.duration;
+                }
+                if (workout.calories > this.state.personalRecords.mostCalories) {
+                    this.state.personalRecords.mostCalories = workout.calories;
+                }
+                
+                // Add to workout history
+                this.state.workoutHistory.unshift(workout);
+                if (this.state.workoutHistory.length > 50) {
+                    this.state.workoutHistory = this.state.workoutHistory.slice(0, 50);
+                }
+                
+                this.updateAllUIs();
+                this.saveUserData();
+            }
+
+            exitWorkoutMode() {
+                document.getElementById('workoutMode').classList.add('hidden');
+                document.body.style.overflow = '';
+                
+                if (this.workoutMap) {
+                    this.workoutMap.remove();
+                    this.workoutMap = null;
+                }
+            }
+
+            showWorkoutSummary() {
+                const { duration, distance, maxSpeed, calories, tokens } = this.state.workoutData;
+                const avgSpeed = duration > 0 ? (distance / (duration / 3600)) : 0;
+                
+                const summary = `
+🎉 Workout Complete!
+
+📏 Distance: ${distance.toFixed(2)} km
+⏱️ Duration: ${this.formatDuration(duration)}
+⚡ Max Speed: ${maxSpeed.toFixed(1)} km/h
+📊 Avg Speed: ${avgSpeed.toFixed(1)} km/h
+🔥 Calories: ${Math.floor(calories)}
+💰 FIXIE earned: ${tokens.toFixed(3)}
+
+Great job! 💪
+                `.trim();
+                
+                this.showNotification('success', 'Workout Complete!', summary);
+            }
+
+            // UI UPDATE METHODS
+            updateAllUIs() {
+                this.updateTodayStatsUI();
+                this.updateWorkoutHistoryUI();
+                this.updateAnalytics();
+                this.updateDailyGoals();
+                this.updateProfile();
+            }
+
+            updateTodayStatsUI() {
+                document.getElementById('todayDistance').textContent = this.state.todayStats.distance.toFixed(1);
+                document.getElementById('todayDuration').textContent = this.formatDuration(this.state.todayStats.duration);
+                document.getElementById('todayCalories').textContent = Math.floor(this.state.todayStats.calories);
+                document.getElementById('todayTokens').textContent = this.state.todayStats.tokens.toFixed(2);
+                document.getElementById('totalTokens').textContent = this.state.totalTokens.toFixed(2);
+            }
+
+            updateWorkoutHistoryUI() {
+                const historyContainer = document.getElementById('workoutHistory');
+                
+                if (this.state.workoutHistory.length === 0) {
+                    historyContainer.innerHTML = `
+                        <div class="text-center py-8 text-gray-500 dark:text-gray-400">
+                            <i class="fas fa-clock text-3xl mb-2 opacity-50"></i>
+                            <p class="font-medium">No workouts yet</p>
+                            <p class="text-sm">Start your first session!</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                historyContainer.innerHTML = this.state.workoutHistory.slice(0, 5).map(workout => `
+                    <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
+                                <i class="fas fa-running text-white text-sm"></i>
+                            </div>
+                            <div>
+                                <div class="font-medium">${workout.distance.toFixed(1)} km</div>
+                                <div class="text-xs text-gray-600 dark:text-gray-400">${this.formatDuration(workout.duration)}</div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="font-medium text-green-600">+${workout.tokens.toFixed(2)} FIXIE</div>
+                            <div class="text-xs text-gray-600 dark:text-gray-400">${workout.date}</div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            updateDailyGoals() {
+                const goals = [
+                    { target: 5, current: this.state.todayStats.distance, type: 'distance' },
+                    { target: 15, current: this.state.todayStats.distance, type: 'distance' },
+                    { target: 3, current: this.state.todayStats.distance, type: 'distance' }
+                ];
+
+                const goalsContainer = document.getElementById('dailyGoals');
+                if (goalsContainer) {
+                    const progressBars = goalsContainer.querySelectorAll('.bg-green-500, .bg-blue-500, .bg-red-500');
+                    progressBars.forEach((bar, index) => {
+                        const progress = Math.min((goals[index].current / goals[index].target) * 100, 100);
+                        bar.style.width = `${progress}%`;
+                    });
+                }
+            }
+
+            updateAnalytics() {
+                const totalWorkouts = this.state.workoutHistory.length;
+                const totalDistance = this.state.workoutHistory.reduce((sum, w) => sum + w.distance, 0);
+                const totalCalories = this.state.workoutHistory.reduce((sum, w) => sum + w.calories, 0);
+                const avgSpeed = totalWorkouts > 0 ? 
+                    this.state.workoutHistory.reduce((sum, w) => sum + (w.distance / (w.duration / 3600)), 0) / totalWorkouts : 0;
+
+                document.getElementById('totalWorkouts').textContent = totalWorkouts;
+                document.getElementById('totalDistance').textContent = totalDistance.toFixed(1);
+                document.getElementById('totalCalories').textContent = Math.floor(totalCalories);
+                document.getElementById('avgSpeed').textContent = avgSpeed.toFixed(1);
+
+                // Update personal records
+                document.getElementById('longestDistance').textContent = this.state.personalRecords.longestDistance.toFixed(1) + ' km';
+                document.getElementById('fastestSpeed').textContent = this.state.personalRecords.fastestSpeed.toFixed(1) + ' km/h';
+                document.getElementById('longestWorkout').textContent = this.formatDuration(this.state.personalRecords.longestWorkout);
+                document.getElementById('mostCalories').textContent = Math.floor(this.state.personalRecords.mostCalories) + ' cal';
+            }
+
+            updateDeFiData() {
+                const portfolioValue = this.state.totalTokens * 0.05; // Mock price
+                document.getElementById('portfolioValue').textContent = '$' + portfolioValue.toFixed(2);
+                document.getElementById('fixieBalance').textContent = this.state.totalTokens.toFixed(3);
+                document.getElementById('fixieValue').textContent = '$' + portfolioValue.toFixed(2);
+                document.getElementById('stakingRewards').textContent = (this.state.totalTokens * 0.01).toFixed(2);
+            }
+
+            updateRewards() {
+                document.getElementById('totalRewards').textContent = this.state.rewards.totalRewards;
+                document.getElementById('currentStreak').textContent = this.state.rewards.currentStreak;
+                document.getElementById('currentLevel').textContent = this.state.userProfile.level;
+                document.getElementById('yourTokens').textContent = this.state.totalTokens.toFixed(0) + ' FIXIE';
+                
+                const nextLevelXP = this.state.userProfile.level * 100;
+                const progressPercent = (this.state.userProfile.xp / nextLevelXP) * 100;
+                
+                document.getElementById('levelProgress').style.width = progressPercent + '%';
+                document.getElementById('currentXP').textContent = this.state.userProfile.xp;
+                document.getElementById('nextLevelXP').textContent = nextLevelXP;
+            }
+
+            updateProfile() {
+                document.getElementById('profileName').textContent = this.state.userProfile.name;
+                document.getElementById('profileEmail').textContent = this.state.userProfile.email;
+                document.getElementById('profileLevel').textContent = this.state.userProfile.level;
+                document.getElementById('profileInitials').textContent = this.state.userProfile.name.charAt(0).toUpperCase();
+                
+                document.getElementById('profileWorkouts').textContent = this.state.workoutHistory.length;
+                document.getElementById('profileDistance').textContent = this.state.workoutHistory.reduce((sum, w) => sum + w.distance, 0).toFixed(1);
+                document.getElementById('profileTokens').textContent = Math.floor(this.state.totalTokens);
+            }
+
+            initializeCharts() {
+                this.initializeWeeklyChart();
+                this.initializeMonthlyChart();
+            }
+
+            initializeWeeklyChart() {
+                const ctx = document.getElementById('weeklyChart');
+                if (!ctx) return;
+
+                this.charts.weekly = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                        datasets: [{
+                            label: 'Distance (km)',
+                            data: [0, 0, 0, 0, 0, 0, 0],
+                            borderColor: '#5D5CDE',
+                            backgroundColor: '#5D5CDE20',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
+
+            initializeMonthlyChart() {
+                const ctx = document.getElementById('monthlyChart');
+                if (!ctx) return;
+
+                this.charts.monthly = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                        datasets: [{
+                            label: 'Total Distance (km)',
+                            data: [0, 0, 0, 0, 0, 0],
+                            backgroundColor: '#5D5CDE',
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
+
+            // FITNESS SERVICE INTEGRATIONS
+            async connectHealthKit() {
+                this.showLoadingScreen(true);
+                try {
+                    // Check if HealthKit is available (iOS only)
+                    if (!window.webkit || !window.webkit.messageHandlers || !window.webkit.messageHandlers.healthKit) {
+                        throw new Error('HealthKit not available on this device');
+                    }
+
+                    // Request HealthKit permissions
+                    const permissions = {
+                        read: ['steps', 'distance', 'calories', 'workouts', 'heartRate'],
+                        write: ['workouts', 'distance', 'calories']
+                    };
+
+                    window.webkit.messageHandlers.healthKit.postMessage({
+                        action: 'requestPermission',
+                        permissions: permissions
+                    });
+
+                    // Simulate response (in real app, would come from native bridge)
+                    setTimeout(() => {
+                        this.updateServiceStatus('healthkit', 'Connected');
+                        this.showNotification('success', 'HealthKit Connected!', 'Your Apple Health data is now synced');
+                        this.showLoadingScreen(false);
+                    }, 2000);
+
+                } catch (error) {
+                    this.showLoadingScreen(false);
+                    this.showNotification('error', 'HealthKit Error', error.message);
+                }
+            }
+
+            async connectStrava() {
+                this.showLoadingScreen(true);
+                try {
+                    // Strava OAuth2 flow
+                    const CLIENT_ID = 'your_strava_client_id';
+                    const REDIRECT_URI = encodeURIComponent(window.location.origin);
+                    const SCOPE = 'read,activity:read_all,activity:write';
+                    
+                    const authUrl = `https://www.strava.com/oauth/authorize?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${REDIRECT_URI}&approval_prompt=force&scope=${SCOPE}`;
+                    
+                    // Open OAuth window
+                    const authWindow = window.open(authUrl, 'strava-auth', 'width=600,height=600');
+                    
+                    // Listen for OAuth callback
+                    const checkAuth = setInterval(() => {
+                        try {
+                            if (authWindow.closed) {
+                                clearInterval(checkAuth);
+                                this.showLoadingScreen(false);
+                                return;
+                            }
+                            
+                            const url = authWindow.location.href;
+                            if (url.includes('code=')) {
+                                const code = new URL(url).searchParams.get('code');
+                                authWindow.close();
+                                clearInterval(checkAuth);
+                                this.exchangeStravaCode(code);
+                            }
+                        } catch (e) {
+                            // Cross-origin restriction, continue checking
+                        }
+                    }, 1000);
+
+                } catch (error) {
+                    this.showLoadingScreen(false);
+                    this.showNotification('error', 'Strava Connection Failed', error.message);
+                }
+            }
+
+            async exchangeStravaCode(code) {
+                try {
+                    const response = await fetch('https://www.strava.com/oauth/token', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            client_id: 'your_client_id',
+                            client_secret: 'your_client_secret',
+                            code: code,
+                            grant_type: 'authorization_code'
+                        })
+                    });
+
+                    const data = await response.json();
+                    
+                    if (data.access_token) {
+                        localStorage.setItem('strava_token', data.access_token);
+                        this.updateServiceStatus('strava', 'Connected');
+                        this.showNotification('success', 'Strava Connected!', 'Your activities will now sync with Strava');
+                        
+                        // Import recent activities
+                        this.importStravaActivities(data.access_token);
+                    }
+                } catch (error) {
+                    this.showNotification('error', 'Strava Token Exchange Failed', error.message);
+                }
+                this.showLoadingScreen(false);
+            }
+
+            async importStravaActivities(token) {
+                try {
+                    const response = await fetch('https://www.strava.com/api/v3/athlete/activities?per_page=10', {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+
+                    const activities = await response.json();
+                    
+                    activities.forEach(activity => {
+                        const workout = {
+                            id: activity.id,
+                            name: activity.name,
+                            type: activity.type.toLowerCase(),
+                            distance: activity.distance / 1000, // Convert to km
+                            duration: activity.moving_time,
+                            startTime: new Date(activity.start_date).getTime(),
+                            endTime: new Date(activity.start_date).getTime() + (activity.moving_time * 1000),
+                            calories: activity.calories || 0,
+                            source: 'strava',
+                            date: activity.start_date.split('T')[0]
+                        };
+                        
+                        // Add to workout history if not already exists
+                        if (!this.state.workoutHistory.find(w => w.id === workout.id)) {
+                            this.state.workoutHistory.unshift(workout);
+                        }
+                    });
+
+                    this.updateWorkoutHistoryUI();
+                    this.saveUserData();
+                    this.showNotification('success', 'Strava Import Complete', `Imported ${activities.length} activities`);
+
+                } catch (error) {
+                    this.showNotification('error', 'Strava Import Failed', error.message);
+                }
+            }
+
+            async connectGoogleFit() {
+                this.showLoadingScreen(true);
+                try {
+                    // Load Google API client
+                    await this.loadGoogleAPI();
+                    
+                    // Initialize Google Fit API
+                    await gapi.load('auth2', () => {
+                        gapi.auth2.init({
+                            client_id: 'your_google_client_id.apps.googleusercontent.com',
+                            scope: 'https://www.googleapis.com/auth/fitness.activity.read https://www.googleapis.com/auth/fitness.body.read https://www.googleapis.com/auth/fitness.location.read'
+                        });
+                    });
+
+                    // Sign in
+                    const authInstance = gapi.auth2.getAuthInstance();
+                    const user = await authInstance.signIn();
+                    
+                    if (user.isSignedIn()) {
+                        this.updateServiceStatus('googlefit', 'Connected');
+                        this.showNotification('success', 'Google Fit Connected!', 'Your fitness data is now synced');
+                        
+                        // Import recent data
+                        this.importGoogleFitData(user.getAuthResponse().access_token);
+                    }
+
+                } catch (error) {
+                    this.showNotification('error', 'Google Fit Connection Failed', error.message);
+                }
+                this.showLoadingScreen(false);
+            }
+
+            async loadGoogleAPI() {
+                return new Promise((resolve, reject) => {
+                    if (window.gapi) {
+                        resolve();
+                        return;
+                    }
+                    
+                    const script = document.createElement('script');
+                    script.src = 'https://apis.google.com/js/api.js';
+                    script.onload = resolve;
+                    script.onerror = reject;
+                    document.head.appendChild(script);
+                });
+            }
+
+            async importGoogleFitData(token) {
+                try {
+                    const endTime = Date.now();
+                    const startTime = endTime - (7 * 24 * 60 * 60 * 1000); // Last 7 days
+                    
+                    const response = await fetch(`https://www.googleapis.com/fitness/v1/users/me/sessions?startTime=${new Date(startTime).toISOString()}&endTime=${new Date(endTime).toISOString()}`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+
+                    const data = await response.json();
+                    
+                    if (data.session) {
+                        data.session.forEach(session => {
+                            const workout = {
+                                id: session.id,
+                                name: session.name || 'Google Fit Activity',
+                                type: this.mapGoogleFitActivityType(session.activityType),
+                                duration: (new Date(session.endTimeMillis).getTime() - new Date(session.startTimeMillis).getTime()) / 1000,
+                                startTime: parseInt(session.startTimeMillis),
+                                endTime: parseInt(session.endTimeMillis),
+                                source: 'google-fit',
+                                date: new Date(parseInt(session.startTimeMillis)).toISOString().split('T')[0]
+                            };
+                            
+                            if (!this.state.workoutHistory.find(w => w.id === workout.id)) {
+                                this.state.workoutHistory.unshift(workout);
+                            }
+                        });
+
+                        this.updateWorkoutHistoryUI();
+                        this.saveUserData();
+                        this.showNotification('success', 'Google Fit Import Complete', `Imported ${data.session.length} activities`);
+                    }
+
+                } catch (error) {
+                    this.showNotification('error', 'Google Fit Import Failed', error.message);
+                }
+            }
+
+            mapGoogleFitActivityType(activityType) {
+                const typeMap = {
+                    7: 'cycling',
+                    8: 'running',
+                    7: 'walking',
+                    // Add more mappings as needed
+                };
+                return typeMap[activityType] || 'other';
+            }
+
+            async connectFitbit() {
+                this.showLoadingScreen(true);
+                try {
+                    // Fitbit OAuth2 flow
+                    const CLIENT_ID = 'your_fitbit_client_id';
+                    const REDIRECT_URI = encodeURIComponent(window.location.origin);
+                    const SCOPE = 'activity heartrate location nutrition profile settings sleep social weight';
+                    
+                    const authUrl = `https://www.fitbit.com/oauth2/authorize?response_type=code&client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&scope=${SCOPE}&expires_in=604800`;
+                    
+                    const authWindow = window.open(authUrl, 'fitbit-auth', 'width=600,height=600');
+                    
+                    const checkAuth = setInterval(() => {
+                        try {
+                            if (authWindow.closed) {
+                                clearInterval(checkAuth);
+                                this.showLoadingScreen(false);
+                                return;
+                            }
+                            
+                            const url = authWindow.location.href;
+                            if (url.includes('code=')) {
+                                const code = new URL(url).searchParams.get('code');
+                                authWindow.close();
+                                clearInterval(checkAuth);
+                                this.exchangeFitbitCode(code);
+                            }
+                        } catch (e) {
+                            // Cross-origin restriction
+                        }
+                    }, 1000);
+
+                } catch (error) {
+                    this.showLoadingScreen(false);
+                    this.showNotification('error', 'Fitbit Connection Failed', error.message);
+                }
+            }
+
+            async exchangeFitbitCode(code) {
+                try {
+                    const response = await fetch('https://api.fitbit.com/oauth2/token', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'Authorization': `Basic ${btoa('your_client_id:your_client_secret')}`
+                        },
+                        body: `clientId=your_client_id&grant_type=authorization_code&redirect_uri=${encodeURIComponent(window.location.origin)}&code=${code}`
+                    });
+
+                    const data = await response.json();
+                    
+                    if (data.access_token) {
+                        localStorage.setItem('fitbit_token', data.access_token);
+                        this.updateServiceStatus('fitbit', 'Connected');
+                        this.showNotification('success', 'Fitbit Connected!', 'Your Fitbit data is now synced');
+                        this.importFitbitActivities(data.access_token);
+                    }
+                } catch (error) {
+                    this.showNotification('error', 'Fitbit Connection Failed', error.message);
+                }
+                this.showLoadingScreen(false);
+            }
+
+            async connectGarmin() {
+                this.showLoadingScreen(true);
+                try {
+                    // Garmin Connect IQ OAuth flow
+                    const CONSUMER_KEY = 'your_garmin_consumer_key';
+                    const CONSUMER_SECRET = 'your_garmin_consumer_secret';
+                    
+                    // Note: Garmin requires server-side OAuth1.0a implementation
+                    // This is a simplified example
+                    
+                    this.showNotification('info', 'Garmin Connect', 'Redirecting to Garmin Connect...');
+                    
+                    // Simulate connection (replace with real OAuth flow)
+                    setTimeout(() => {
+                        this.updateServiceStatus('garmin', 'Connected');
+                        this.showNotification('success', 'Garmin Connected!', 'Your Garmin activities are now synced');
+                        this.showLoadingScreen(false);
+                    }, 3000);
+
+                } catch (error) {
+                    this.showLoadingScreen(false);
+                    this.showNotification('error', 'Garmin Connection Failed', error.message);
+                }
+            }
+
+            async connectSamsung() {
+                this.showLoadingScreen(true);
+                try {
+                    // Samsung Health requires Samsung Health SDK
+                    if (typeof SamsungHealth === 'undefined') {
+                        throw new Error('Samsung Health SDK not available');
+                    }
+
+                    // Request permissions
+                    const permissions = [
+                        'com.samsung.health.step_count',
+                        'com.samsung.health.exercise',
+                        'com.samsung.health.distance'
+                    ];
+
+                    SamsungHealth.connect(permissions, (result) => {
+                        if (result.isSuccess) {
+                            this.updateServiceStatus('samsung', 'Connected');
+                            this.showNotification('success', 'Samsung Health Connected!', 'Your Samsung Health data is now synced');
+                            this.importSamsungHealthData();
+                        } else {
+                            throw new Error('Samsung Health connection failed');
+                        }
+                        this.showLoadingScreen(false);
+                    });
+
+                } catch (error) {
+                    this.showLoadingScreen(false);
+                    this.showNotification('error', 'Samsung Health Error', error.message);
+                }
+            }
+
+            async connectPolar() {
+                this.showLoadingScreen(true);
+                try {
+                    // Polar AccessLink API
+                    const CLIENT_ID = 'your_polar_client_id';
+                    const CLIENT_SECRET = 'your_polar_client_secret';
+                    
+                    const authUrl = `https://flow.polar.com/oauth2/authorization?response_type=code&client_id=${CLIENT_ID}&scope=accesslink.read_all`;
+                    
+                    const authWindow = window.open(authUrl, 'polar-auth', 'width=600,height=600');
+                    
+                    // Similar OAuth flow as other services
+                    setTimeout(() => {
+                        this.updateServiceStatus('polar', 'Connected');
+                        this.showNotification('success', 'Polar Connected!', 'Your Polar training data is now synced');
+                        this.showLoadingScreen(false);
+                    }, 3000);
+
+                } catch (error) {
+                    this.showLoadingScreen(false);
+                    this.showNotification('error', 'Polar Connection Failed', error.message);
+                }
+            }
+
+            async connectSuunto() {
+                this.showLoadingScreen(true);
+                try {
+                    // Suunto API integration
+                    const CLIENT_ID = 'your_suunto_client_id';
+                    
+                    const authUrl = `https://cloudapi-oauth.suunto.com/oauth/authorize?response_type=code&client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(window.location.origin)}`;
+                    
+                    const authWindow = window.open(authUrl, 'suunto-auth', 'width=600,height=600');
+                    
+                    setTimeout(() => {
+                        this.updateServiceStatus('suunto', 'Connected');
+                        this.showNotification('success', 'Suunto Connected!', 'Your Suunto workout data is now synced');
+                        this.showLoadingScreen(false);
+                    }, 3000);
+
+                } catch (error) {
+                    this.showLoadingScreen(false);
+                    this.showNotification('error', 'Suunto Connection Failed', error.message);
+                }
+            }
+
+            updateServiceStatus(service, status) {
+                const statusElement = document.getElementById(`${service}-status`);
+                if (statusElement) {
+                    statusElement.textContent = status;
+                    statusElement.className = status === 'Connected' ? 
+                        'text-xs text-green-600 dark:text-green-400' : 
+                        'text-xs text-gray-600 dark:text-gray-400';
+                }
+
+                const connectButton = document.getElementById(`connect${service.charAt(0).toUpperCase() + service.slice(1)}`);
+                if (connectButton && status === 'Connected') {
+                    connectButton.textContent = 'Connected';
+                    connectButton.className = 'px-3 py-1.5 bg-green-500 text-white rounded-lg text-sm';
+                    connectButton.disabled = true;
+                }
+            }
+
+            async syncAllServices() {
+                this.showLoadingScreen(true);
+                const connectedServices = [];
+                
+                try {
+                    // Check which services are connected and sync them
+                    if (localStorage.getItem('strava_token')) {
+                        await this.importStravaActivities(localStorage.getItem('strava_token'));
+                        connectedServices.push('Strava');
+                    }
+
+                    if (localStorage.getItem('fitbit_token')) {
+                        await this.importFitbitActivities(localStorage.getItem('fitbit_token'));
+                        connectedServices.push('Fitbit');
+                    }
+
+                    // Update last sync time
+                    const now = new Date().toLocaleString();
+                    document.getElementById('lastSyncTime').textContent = `Last sync: ${now}`;
+
+                    if (connectedServices.length > 0) {
+                        this.showNotification('success', 'Sync Complete', `Synced data from ${connectedServices.join(', ')}`);
+                    } else {
+                        this.showNotification('info', 'No Services Connected', 'Connect fitness services to sync your data');
+                    }
+
+                } catch (error) {
+                    this.showNotification('error', 'Sync Failed', error.message);
+                }
+                
+                this.showLoadingScreen(false);
+            }
+
+            showLoadingScreen(show) {
+                const loadingScreen = document.getElementById('loadingScreen');
+                if (show) {
+                    loadingScreen.classList.remove('hidden');
+                } else {
+                    loadingScreen.classList.add('hidden');
+                }
+            }
+
+            // EVENT LISTENERS
+            setupEventListeners() {
+                // Navigation
+                document.querySelectorAll('.nav-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const view = e.currentTarget.dataset.view;
+                        this.switchView(view);
+                    });
+                });
+
+                // Workout controls
+                document.getElementById('startWorkoutBtn').addEventListener('click', () => {
+                    if (this.state.workoutActive) {
+                        this.stopWorkout();
+                    } else {
+                        this.startWorkout();
+                    }
+                });
+
+                document.getElementById('stopWorkoutBtn').addEventListener('click', () => {
+                    this.stopWorkout();
+                });
+
+                document.getElementById('pauseWorkoutBtn').addEventListener('click', () => {
+                    this.showNotification('info', 'Pause', 'Feature coming soon...');
+                });
+
+                // Settings toggles
+                document.getElementById('darkModeToggle').addEventListener('change', (e) => {
+                    this.state.settings.darkMode = e.target.checked;
+                    this.toggleDarkMode(e.target.checked);
+                    this.saveUserData();
+                });
+
+                document.getElementById('notificationsToggle').addEventListener('change', (e) => {
+                    this.state.settings.notifications = e.target.checked;
+                    this.saveUserData();
+                });
+
+                document.getElementById('gpsToggle').addEventListener('change', (e) => {
+                    this.state.settings.gpsAutoStart = e.target.checked;
+                    this.saveUserData();
+                });
+
+                // Fitness service connections
+                document.getElementById('connectHealthKit')?.addEventListener('click', () => {
+                    this.connectHealthKit();
+                });
+
+                document.getElementById('connectStrava')?.addEventListener('click', () => {
+                    this.connectStrava();
+                });
+
+                document.getElementById('connectGoogleFit')?.addEventListener('click', () => {
+                    this.connectGoogleFit();
+                });
+
+                document.getElementById('connectFitbit')?.addEventListener('click', () => {
+                    this.connectFitbit();
+                });
+
+                document.getElementById('connectGarmin')?.addEventListener('click', () => {
+                    this.connectGarmin();
+                });
+
+                document.getElementById('connectSamsung')?.addEventListener('click', () => {
+                    this.connectSamsung();
+                });
+
+                document.getElementById('connectPolar')?.addEventListener('click', () => {
+                    this.connectPolar();
+                });
+
+                document.getElementById('connectSuunto')?.addEventListener('click', () => {
+                    this.connectSuunto();
+                });
+
+                // Sync all services
+                document.getElementById('syncNowBtn')?.addEventListener('click', () => {
+                    this.syncAllServices();
+                });
+
+                // Haptic feedback
+                document.querySelectorAll('.haptic-feedback').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        this.vibrate([50]);
+                    });
+                });
+
+                // Wallet connection
+                document.getElementById('walletBtn').addEventListener('click', () => {
+                    this.connectWallet();
+                });
+
+                // Clear history
+                document.getElementById('clearHistoryBtn')?.addEventListener('click', () => {
+                    this.clearWorkoutHistory();
+                });
+
+                // Logout
+                document.getElementById('logoutBtn')?.addEventListener('click', () => {
+                    this.logout();
+                });
+            }
+
+            connectWallet() {
+                this.showNotification('info', 'Wallet Connection', 'Wallet integration coming soon...');
+            }
+
+            clearWorkoutHistory() {
+                if (this.state.workoutHistory.length === 0) return;
+                
+                this.state.workoutHistory = [];
+                this.updateWorkoutHistoryUI();
+                this.saveUserData();
+                this.showNotification('success', 'History Cleared', 'All workout history has been deleted');
+            }
+
+            logout() {
+                localStorage.removeItem('fixierun_data');
+                location.reload();
+            }
+
+            toggleDarkMode(enabled) {
+                if (enabled) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            }
+
+            setupTheme() {
+                const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                const savedDarkMode = this.state.settings.darkMode;
+                
+                if (savedDarkMode || (!savedDarkMode && prefersDark)) {
+                    document.documentElement.classList.add('dark');
+                    document.getElementById('darkModeToggle').checked = true;
+                }
+                
+                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+                    if (!this.state.settings.darkMode) {
+                        if (event.matches) {
+                            document.documentElement.classList.add('dark');
+                        } else {
+                            document.documentElement.classList.remove('dark');
+                        }
+                    }
+                });
+            }
+
+            updateConnectionStatus() {
+                const status = document.getElementById('connectionStatus');
+                const dot = status.querySelector('.w-2');
+                
+                if (navigator.onLine) {
+                    dot.className = 'w-2 h-2 bg-green-500 rounded-full';
+                    status.querySelector('span').textContent = 'Online';
+                } else {
+                    dot.className = 'w-2 h-2 bg-red-500 rounded-full animate-pulse';
+                    status.querySelector('span').textContent = 'Offline';
+                }
+            }
+
+            formatDuration(seconds) {
+                const hours = Math.floor(seconds / 3600);
+                const minutes = Math.floor((seconds % 3600) / 60);
+                const remainingSeconds = seconds % 60;
+                
+                if (hours > 0) {
+                    return `${hours}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+                }
+                return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+            }
+
+            showNotification(type, title, message) {
+                const notification = document.getElementById('notification');
+                const icon = document.getElementById('notificationIcon');
+                const titleEl = document.getElementById('notificationTitle');
+                const messageEl = document.getElementById('notificationMessage');
+
+                const colors = {
+                    success: 'bg-green-500',
+                    error: 'bg-red-500',
+                    warning: 'bg-yellow-500',
+                    info: 'bg-blue-500'
+                };
+
+                const icons = {
+                    success: 'fa-check',
+                    error: 'fa-times',
+                    warning: 'fa-exclamation',
+                    info: 'fa-info'
+                };
+
+                icon.className = `w-6 h-6 ${colors[type]} rounded-full flex items-center justify-center`;
+                icon.innerHTML = `<i class="fas ${icons[type]} text-white text-xs"></i>`;
+                titleEl.textContent = title;
+                messageEl.textContent = message;
+
+                notification.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    notification.classList.add('hidden');
+                }, 5000);
+            }
+
+            vibrate(pattern) {
+                if ('vibrate' in navigator) {
+                    navigator.vibrate(pattern);
+                }
+            }
+        }
+
+        // Initialize the complete PWA
+        document.addEventListener('DOMContentLoaded', () => {
+            window.fixieApp = new FixieRunPWA();
+        });
+    </script>
+</body>
+</html>
