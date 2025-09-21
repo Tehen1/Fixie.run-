@@ -1273,8 +1273,18 @@
                 this.loadUserData();
                 this.setupPWA();
                 
-                // Initialize GPS
-                await this.initializeGPS();
+                // Initialize GPS with auto-start
+                try {
+                    await this.initializeGPS();
+                    // Start GPS tracking automatically if enabled in settings
+                    if (this.state.settings.gpsAutoStart) {
+                        this.startGPSTracking();
+                        this.updateGPSStatus('searching', 'Recherche du signal GPS...');
+                    }
+                } catch (error) {
+                    console.error('Erreur d\'initialisation GPS:', error);
+                    this.updateGPSStatus('error', 'Erreur GPS: ' + (error.message || 'Inconnue'));
+                }
                 
                 // Initialize charts
                 this.initializeCharts();
