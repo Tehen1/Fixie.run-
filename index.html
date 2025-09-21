@@ -4,6 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>FixieRun - Move to Earn PWA</title>
+    <meta name="description" content="Earn crypto tokens by moving with FixieRun. Track your workouts and get rewarded for your fitness journey.">
+    <meta name="theme-color" content="#5D5CDE">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="FixieRun">
+    <meta name="msapplication-TileColor" content="#5D5CDE">
+    <meta name="msapplication-TileImage" content="/icons/ms-icon-144x144.png">
+    <meta name="msapplication-config" content="/browserconfig.xml">
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+    <link rel="manifest" href="/manifest.json" crossorigin="use-credentials">
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://kit.fontawesome.com" crossorigin>
+    <link rel="preconnect" href="https://unpkg.com" crossorigin>
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/chart.js" as="script">
+    <link rel="preload" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" as="style">
+    <link rel="preload" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" as="script">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://kit.fontawesome.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://unpkg.com; img-src 'self' data: https:; connect-src 'self' https:; font-src 'self' https: data:;">
     
     <!-- PWA Manifest -->
     <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIkZpeGllUnVuIC0gTW92ZSB0byBFYXJuIiwKICAic2hvcnRfbmFtZSI6ICJGaXhpZVJ1biIsCiAgImRlc2NyaXB0aW9uIjogIkVhcm4gY3J5cHRvIHRva2VucyBieSBjeWNsaW5nIGFuZCBydW5uaW5nIiwKICAic3RhcnRfdXJsIjogIi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiMxODE4MTgiLAogICJ0aGVtZV9jb2xvciI6ICIjNUQ1Q0RFIiwKICAib3JpZW50YXRpb24iOiAicG9ydHJhaXQiLAogICJjYXRlZ29yaWVzIjogWyJmaXRuZXNzIiwgImhlYWx0aCIsICJzcG9ydHMiLCAiY3J5cHRvIl0sCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbDtiYXNlNjQsUEhOMlp5QjNhV1IwYUQwaU1qUXdJaUJvWldsbmFIUTlJakUyTUNJZ2VHMXNibk05SW1oMGRIQTZMeTkzZDNjdWR6TXViM0puTHpJd01EQXZjM1puSWlCMmFXVjNRbTk0UFNJd0lEQWdNalF3SURFMk1DSStQSEpsWTNRZ2QybGtkR2c5SWpJME1DSWdhR1ZwWjJoMFBTSXhOakFpSUdacGJHdzlJaU0xUkRWRFJFVWlMejQ4TDNOMlp6ND0iLAogICAgICAic2l6ZXMiOiAiMjQweDI0MCIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiCiAgICB9LAogICAgewogICAgICAic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbDtiYXNlNjQsUEhOMlp5QjNhV1IwYUQwaU5URXlJaUJvWldsbmFIUTlJalV4TWlJZ2VHMXNibk05SW1oMGRIQTZMeTkzZDNjdWR6TXViM0puTHpJd01EQXZjM1puSWlCMmFXVjNRbTk0UFNJd0lEQWdOVEV5SURVeE1pSStQSEpsWTNRZ2QybGtkR2c5SWpVeE1pSWdhR1ZwWjJoMFBTSTFNVElpSUdacGJHdzlJaU0xUkRWRFJFVWlMejQ4TDNOMlp6ND0iLAogICAgICAic2l6ZXMiOiAiNTEyeDUxMiIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiCiAgICB9CiAgXQp9" />
@@ -20,13 +40,33 @@
     <link rel="preconnect" href="https://unpkg.com">
     
     <!-- CSS Libraries -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Load critical CSS -->
+    <style id="critical-css">
+        /* Critical CSS here */
+        body { opacity: 0; transition: opacity 0.3s; }
+        .loading-screen { 
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
+            background: #5D5CDE; color: white; 
+            display: flex; justify-content: center; align-items: center; 
+            z-index: 9999; 
+        }
+    </style>
     
-    <!-- GPS Map - Leaflet -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Load non-critical CSS asynchronously -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
+          media="print" onload="this.media='all'" />
+    
+    <!-- Load scripts with defer -->
+    <script src="https://cdn.tailwindcss.com" defer></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+    
+    <!-- Load Leaflet JS with defer -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" 
+            defer 
+            onload="console.log('Leaflet loaded')"
+            onerror="console.error('Failed to load Leaflet')">
+    </script>
     
     <script>
         tailwind.config = {
@@ -184,6 +224,17 @@
     </style>
 </head>
 <body class="h-full bg-bg-light dark:bg-bg-dark text-gray-900 dark:text-white transition-colors duration-300 safe-top safe-bottom">
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="text-center">
+            <div class="animate-pulse text-4xl mb-4">🚴‍♂️</div>
+            <h1 class="text-2xl font-bold mb-2">FixieRun</h1>
+            <p class="opacity-80">Chargement de l'application...</p>
+        </div>
+    </div>
+    
+    <!-- App Shell -->
+    <div id="app" class="min-h-screen flex flex-col" style="display: none;">
     
     <div id="app" class="min-h-screen flex flex-col">
         
@@ -1204,6 +1255,60 @@
         </div>
     </div>
 
+    <!-- Service Worker Registration -->
+    <script>
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful');
+                        // Check for updates
+                        registration.update();
+                    })
+                    .catch(err => console.error('ServiceWorker registration failed: ', err));
+            });
+        }
+        
+        // Handle app load
+        window.addEventListener('load', () => {
+            // Hide loading screen
+            const loadingScreen = document.getElementById('loadingScreen');
+            const app = document.getElementById('app');
+            
+            // Small delay for better UX
+            setTimeout(() => {
+                loadingScreen.style.opacity = '0';
+                app.style.display = 'flex';
+                document.body.style.opacity = '1';
+                
+                // Remove loading screen from DOM after transition
+                setTimeout(() => {
+                    loadingScreen.remove();
+                }, 300);
+            }, 500);
+        });
+        
+        // Handle offline/online status
+        window.addEventListener('online', () => {
+            console.log('Online');
+            // Sync data when back online
+            if (window.fixieApp) {
+                window.fixieApp.syncData();
+            }
+        });
+        
+        window.addEventListener('offline', () => {
+            console.log('Offline');
+            // Show offline indicator
+            const status = document.getElementById('connectionStatus');
+            if (status) {
+                status.innerHTML = '<div class="w-2 h-2 bg-red-500 rounded-full"></div><span class="ml-1">Hors ligne</span>';
+            }
+        });
+    </script>
+    
+    <!-- Main App Script -->
     <script>
         // 🚀 COMPLETE FIXIERUN PWA - ALL SECTIONS
         class FixieRunPWA {
@@ -2776,10 +2881,73 @@ Great job! 💪
             }
         }
 
-        // Initialize the complete PWA
+        // Initialize the complete PWA when DOM is ready
         document.addEventListener('DOMContentLoaded', () => {
-            window.fixieApp = new FixieRunPWA();
+            // Use requestIdleCallback if available
+            if ('requestIdleCallback' in window) {
+                window.requestIdleCallback(
+                    () => { window.fixieApp = new FixiePWA(); },
+                    { timeout: 2000 }
+                );
+            } else {
+                // Fallback for browsers that don't support requestIdleCallback
+                setTimeout(() => { window.fixieApp = new FixiePWA(); }, 0);
+            }
+            
+            // Track performance metrics
+            if ('performance' in window) {
+                const perfData = window.performance.timing;
+                const pageLoadTime = perfData.loadEventEnd - perfData.navigationStart;
+                console.log(`Page loaded in ${pageLoadTime}ms`);
+                
+                // Send metrics to analytics
+                if (window.ga) {
+                    ga('send', 'timing', 'Page Load', 'load', pageLoadTime);
+                }
+            }
+        });
+        
+        // Handle beforeinstallprompt for PWA installation
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Prevent Chrome 67 and earlier from automatically showing the prompt
+            e.preventDefault();
+            // Stash the event so it can be triggered later
+            deferredPrompt = e;
+            // Show install button or other UI
+            showInstallPromotion();
+        });
+        
+        function showInstallPromotion() {
+            // Show your custom install button/prompt
+            console.log('PWA installation available');
+            // You can add your custom UI here
+        }
+        
+        // Handle app installed event
+        window.addEventListener('appinstalled', (evt) => {
+            console.log('App installed successfully');
+            // Hide the app-provided install promotion
+            hideInstallPromotion();
+            // Log install to analytics
+            if (window.ga) {
+                ga('send', 'event', 'PWA', 'install');
+            }
         });
     </script>
+    
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="/css/styles.css" as="style">
+    <link rel="preload" href="/js/app.js" as="script">
+    
+    <!-- Preconnect to external domains -->
+    <link rel="preconnect" href="https://api.fixierun.com">
+    <link rel="preconnect" href="https://cdn.fixierun.com">
+    
+    <!-- Preload fonts -->
+    <link rel="preload" href="/fonts/Inter.woff2" as="font" type="font/woff2" crossorigin>
 </body>
 </html>
