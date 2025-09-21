@@ -1482,29 +1482,52 @@
                 }
             }
 
+            // Helper function to get current position with better error handling
+            getCurrentPosition() {
+                return new Promise((resolve, reject) => {
+                    if (!navigator.geolocation) {
+                        return reject(new Error('Geolocation is not supported by your browser'));
+                    }
+
+                    // Try high accuracy first
+                    navigator.geolocation.getCurrentPosition(
+                        resolve,
+                        (error) => {
+                            // If high accuracy fails, try with lower accuracy
+                            console.warn('High accuracy GPS failed, trying with lower accuracy...');
+                            navigator.geolocation.getCurrentPosition(
+                                resolve,
+                                (lowAccuracyError) => {
+                                    console.error('Low accuracy GPS also failed');
+                                    reject(lowAccuracyError);
+                                },
+                                {
+                                    enableHighAccuracy: false,
+                                    timeout: 10000,
+                                    maximumAge: 0
+                                }
+                            );
+                        },
+                        {
+                            enableHighAccuracy: true,
+                            timeout: 10000,
+                            maximumAge: 0
+                        }
+                    );
+                });
+            }
+
             async initializeGPS() {
                 console.log('📍 Initializing GPS system...');
                 
                 try {
+                    // Check if geolocation is supported
                     if (!navigator.geolocation) {
                         throw new Error('Geolocation not supported');
                     }
 
-                    // Check and request permissions first
-                    if (navigator.permissions) {
-                        const permissionStatus = await navigator.permissions.query({ name: 'geolocation' });
-                        if (permissionStatus.state === 'denied') {
-                            throw new Error('Location permission denied');
-                        }
-                        
-                        // Listen for permission changes
-                        permissionStatus.onchange = () => {
-                            if (permissionStatus.state === 'granted') {
-                                this.startGPSTracking();
-                            } else {
-                                this.handleGPSError({ code: 1, message: 'Location permission denied' });
-                            }
-                        };
+                    // Request permission and get current position
+                    this.updateGPSStatus('searching', 'Requesting GPS access...');
                     }
 
                     this.updateGPSStatus('searching', 'Searching for GPS signal...');
@@ -1519,34 +1542,65 @@
             }
 
             startGPSTracking() {
+                console.log('🔄 Starting GPS tracking...');
+                
                 // Clear any existing watcher
                 if (this.watchId !== null) {
                     navigator.geolocation.clearWatch(this.watchId);
+                    this.watchId = null;
+                }
+                
+                // Clear any existing timeout
+                if (this.gpsTimeout) {
+                    clearTimeout(this.gpsTimeout);
                 }
 
-                // Configure GPS options
+                // Configure GPS options with fallbacks
                 const gpsOptions = {
                     enableHighAccuracy: true,
-                    timeout: 10000,
-                    maximumAge: 0, // Always get a fresh position
-                    distanceFilter: 1 // Minimum distance in meters to trigger update
+                    timeout: 15000, // Increased timeout for mobile devices
+                    maximumAge: 0,   // Always get a fresh position
+                    distanceFilter: 5 // Slightly higher to save battery
                 };
 
                 // Start watching position
-                this.watchId = navigator.geolocation.watchPosition(
-                    (position) => this.handleGPSUpdate(position),
-                    (error) => this.handleGPSError(error),
-                    gpsOptions
-                );
-
-                // Set a timeout to check if we're getting updates
-                this.gpsTimeout = setTimeout(() => {
-                    if (!this.state.lastGpsUpdate || (Date.now() - this.state.lastGpsUpdate > 10000)) {
-                        this.updateGPSStatus('error', 'GPS signal weak or lost');
-                    }
-                }, 10000);
-
-                console.log('✅ GPS tracking started');
+                try {
+                    this.watchId = navigator.geolocation.watchPosition(
+                        (position) => {
+                            console.log('📍 GPS position update:', position.coords);
+                            this.handleGPSUpdate(position);
+                            
+                            // Reset error state on successful update
+                            this.updateGPSStatus('active', `GPS active - Accuracy: ±${Math.round(position.coords.accuracy)}m`);
+                            
+                            // Reset the timeout
+                            if (this.gpsTimeout) clearTimeout(this.gpsTimeout);
+                            
+                            // Set new timeout for next check
+                            this.gpsTimeout = setTimeout(() => {
+                                this.updateGPSStatus('warning', 'GPS signal weak - moving to low accuracy mode');
+                                // Try to restart with lower accuracy
+                                this.startLowAccuracyTracking();
+                            }, 20000); // 20 seconds of no updates
+                        },
+                        (error) => {
+                            console.error('GPS watchPosition error:', error);
+                            this.handleGPSError(error);
+                            
+                            // Try to restart with different settings
+                            setTimeout(() => {
+                                this.startLowAccuracyTracking();
+                            }, 1000);
+                        },
+                        gpsOptions
+                    );
+                    
+                    console.log('✅ GPS tracking started with ID:', this.watchId);
+                    
+                } catch (error) {
+                    console.error('Failed to start GPS tracking:', error);
+                    this.handleGPSError(error);
+                }
             }
 
             handleGPSUpdate(position) {
@@ -1718,22 +1772,118 @@
                 return 'Unknown GPS error';
             }
 
+            // Start tracking with lower accuracy settings
+            startLowAccuracyTracking() {
+                console.log('🔄 Starting low accuracy GPS tracking...');
+                
+                if (this.watchId !== null) {
+                    navigator.geolocation.clearWatch(this.watchId);
+                }
+                
+                const lowAccuracyOptions = {
+                    enableHighAccuracy: false, // Lower accuracy to save battery
+                    timeout: 10000,
+                    maximumAge: 30000, // Accept slightly older positions
+                    distanceFilter: 10 // Larger distance filter
+                };
+                
+                try {
+                    this.watchId = navigator.geolocation.watchPosition(
+                        (position) => {
+                            console.log('📍 Low accuracy GPS update:', position.coords);
+                            this.handleGPSUpdate(position);
+                        },
+                        (error) => {
+                            console.error('Low accuracy GPS error:', error);
+                            this.handleGPSError(error);
+                        },
+                        lowAccuracyOptions
+                    );
+                    
+                    this.updateGPSStatus('warning', 'Using low accuracy GPS mode');
+                    
+                } catch (error) {
+                    console.error('Failed to start low accuracy GPS:', error);
+                    this.handleGPSError(error);
+                }
+            }
+            
             handleGPSError(error) {
+                console.error('GPS Error:', error);
+                
                 let message = 'GPS Error';
+                let showRecovery = false;
+                
                 switch(error.code) {
                     case error.PERMISSION_DENIED:
-                        message = 'GPS permission denied';
+                        message = 'Autorisation GPS refusée';
+                        showRecovery = true;
                         break;
                     case error.POSITION_UNAVAILABLE:
-                        message = 'GPS signal unavailable';
+                        message = 'Signal GPS indisponible';
+                        showRecovery = true;
                         break;
                     case error.TIMEOUT:
-                        message = 'GPS timeout';
+                        message = 'Délai GPS dépassé';
+                        showRecovery = true;
                         break;
+                    default:
+                        message = `Erreur GPS: ${error.message || 'Inconnue'}`;
                 }
                 
                 this.updateGPSStatus('error', message);
                 this.state.gpsEnabled = false;
+                
+                // Show recovery options if needed
+                if (showRecovery) {
+                    this.showGPSErrorRecovery(message);
+                }
+            }
+            
+            showGPSErrorRecovery(message) {
+                // Check if we already showed the recovery UI
+                if (document.getElementById('gps-recovery')) return;
+                
+                const recoveryHtml = `
+                    <div id="gps-recovery" class="fixed bottom-4 left-4 right-4 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-lg z-50">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1">
+                                <h3 class="font-bold text-red-500">Problème GPS</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">${message}</p>
+                            </div>
+                            <div class="flex space-x-2 ml-4">
+                                <button id="retry-gps" class="px-3 py-1.5 bg-primary text-white rounded-lg text-sm font-medium">
+                                    Réessayer
+                                </button>
+                                <button id="dismiss-gps-error" class="px-3 py-1.5 bg-gray-200 dark:bg-gray-700 rounded-lg text-sm">
+                                    Fermer
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Add to DOM
+                document.body.insertAdjacentHTML('beforeend', recoveryHtml);
+                
+                // Add event listeners
+                document.getElementById('retry-gps')?.addEventListener('click', () => {
+                    document.getElementById('gps-recovery')?.remove();
+                    this.initializeGPS();
+                });
+                
+                document.getElementById('dismiss-gps-error')?.addEventListener('click', () => {
+                    document.getElementById('gps-recovery')?.remove();
+                });
+                
+                // Auto-dismiss after 10 seconds
+                setTimeout(() => {
+                    const recoveryEl = document.getElementById('gps-recovery');
+                    if (recoveryEl) {
+                        recoveryEl.style.opacity = '0';
+                        setTimeout(() => recoveryEl.remove(), 300);
+                    }
+                }, 10000);
             }
 
             updateGPSStatus(status, message) {

@@ -64,9 +64,13 @@ self.addEventListener('fetch', (event) => {
   // Skip non-GET requests
   if (event.request.method !== 'GET') return;
   
-  // Skip cross-origin requests
+  // Autoriser les requêtes GPS et les requêtes vers l'API
   if (!event.request.url.startsWith(self.location.origin) && 
-      !event.request.url.startsWith('https://api.fixierun.com')) {
+      !event.request.url.startsWith('https://api.fixierun.com') &&
+      !event.request.url.startsWith('https://www.google.com/maps') &&
+      !event.request.url.includes('tile.openstreetmap.org') &&
+      !event.request.url.includes('geolocation') &&
+      !event.request.url.includes('gps')) {
     return;
   }
   
