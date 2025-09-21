@@ -1375,105 +1375,203 @@
                         throw new Error('Geolocation not supported');
                     }
 
-                    this.updateGPSStatus('searching', 'Requesting GPS access...');
-                    const position = await this.getCurrentPosition();
+                    // Check and request permissions first
+                    if (navigator.permissions) {
+                        const permissionStatus = await navigator.permissions.query({ name: 'geolocation' });
+                        if (permissionStatus.state === 'denied') {
+                            throw new Error('Location permission denied');
+                        }
+                        
+                        // Listen for permission changes
+                        permissionStatus.onchange = () => {
+                            if (permissionStatus.state === 'granted') {
+                                this.startGPSTracking();
+                            } else {
+                                this.handleGPSError({ code: 1, message: 'Location permission denied' });
+                            }
+                        };
+                    }
+
+                    this.updateGPSStatus('searching', 'Searching for GPS signal...');
                     
-                    this.state.gpsEnabled = true;
-                    this.state.currentPosition = position.coords;
-                    
-                    this.updateGPSStatus('active', `GPS active - Accuracy: ±${Math.round(position.coords.accuracy)}m`);
-                    this.initializeMap(position.coords.latitude, position.coords.longitude);
+                    // Start continuous GPS tracking
                     this.startGPSTracking();
                     
                 } catch (error) {
-                    console.error('❌ GPS failed:', this.getErrorMessage(error));
+                    console.error('❌ GPS initialization failed:', this.getErrorMessage(error));
                     this.handleGPSError(error);
                 }
             }
 
-            getCurrentPosition() {
-                return new Promise((resolve, reject) => {
-                    navigator.geolocation.getCurrentPosition(resolve, reject, {
-                        enableHighAccuracy: true,
-                        timeout: 15000,
-                        maximumAge: 30000
-                    });
-                });
-            }
-
             startGPSTracking() {
+                // Clear any existing watcher
+                if (this.watchId !== null) {
+                    navigator.geolocation.clearWatch(this.watchId);
+                }
+
+                // Configure GPS options
+                const gpsOptions = {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0, // Always get a fresh position
+                    distanceFilter: 1 // Minimum distance in meters to trigger update
+                };
+
+                // Start watching position
                 this.watchId = navigator.geolocation.watchPosition(
                     (position) => this.handleGPSUpdate(position),
                     (error) => this.handleGPSError(error),
-                    {
-                        enableHighAccuracy: true,
-                        timeout: 10000,
-                        maximumAge: 5000
-                    }
+                    gpsOptions
                 );
+
+                // Set a timeout to check if we're getting updates
+                this.gpsTimeout = setTimeout(() => {
+                    if (!this.state.lastGpsUpdate || (Date.now() - this.state.lastGpsUpdate > 10000)) {
+                        this.updateGPSStatus('error', 'GPS signal weak or lost');
+                    }
+                }, 10000);
+
+                console.log('✅ GPS tracking started');
             }
 
             handleGPSUpdate(position) {
-                const coords = position.coords;
-                this.state.currentPosition = coords;
-                
-                document.getElementById('gpsAccuracy').innerHTML = `
-                    <i class="fas fa-crosshairs mr-1"></i>
-                    <span>±${Math.round(coords.accuracy)}m</span>
-                `;
+                try {
+                    const coords = position.coords;
+                    const now = Date.now();
+                    this.state.lastGpsUpdate = now;
+                    this.state.currentPosition = coords;
 
-                if (this.map && this.marker) {
-                    const newPos = [coords.latitude, coords.longitude];
-                    this.marker.setLatLng(newPos);
-                    this.map.setView(newPos);
-                }
+                    // Update GPS status and accuracy display
+                    const accuracy = Math.round(coords.accuracy);
+                    const accuracyElement = document.getElementById('gpsAccuracy');
+                    if (accuracyElement) {
+                        accuracyElement.innerHTML = `
+                            <i class="fas fa-crosshairs mr-1"></i>
+                            <span>±${accuracy}m</span>
+                        `;
+                    }
 
-                if (coords.speed !== null && coords.speed >= 0) {
-                    const speedKmh = coords.speed * 3.6;
-                    document.getElementById('currentSpeed').textContent = speedKmh.toFixed(1);
-                    
-                    if (this.state.workoutActive) {
-                        this.state.workoutData.speed = speedKmh;
-                        if (speedKmh > this.state.workoutData.maxSpeed) {
-                            this.state.workoutData.maxSpeed = speedKmh;
+                    // Update map position if available
+                    if (this.map && this.marker) {
+                        const newPos = [coords.latitude, coords.longitude];
+                        this.marker.setLatLng(newPos);
+                        
+                        // Only update map view if we're in workout mode or if it's the first position
+                        if (this.state.workoutActive || !this.state.lastMapUpdate || (now - this.state.lastMapUpdate) > 5000) {
+                            this.map.setView(newPos);
+                            this.state.lastMapUpdate = now;
                         }
                     }
-                }
 
-                if (this.state.workoutActive) {
-                    this.processWorkoutMovement(coords);
+                    // Process speed if available
+                    if (coords.speed !== null && coords.speed >= 0) {
+                        const speedKmh = coords.speed * 3.6; // Convert m/s to km/h
+                        const speedElement = document.getElementById('currentSpeed');
+                        if (speedElement) {
+                            speedElement.textContent = speedKmh.toFixed(1);
+                        }
+                        
+                        if (this.state.workoutActive) {
+                            this.state.workoutData.speed = speedKmh;
+                            if (speedKmh > this.state.workoutData.maxSpeed) {
+                                this.state.workoutData.maxSpeed = speedKmh;
+                            }
+                            
+                            // Update UI more frequently during workout
+                            this.updateWorkoutUI();
+                        }
+                    }
+
+                    // Process workout movement if in workout mode
+                    if (this.state.workoutActive) {
+                        this.processWorkoutMovement(coords);
+                    }
+
+                    // Update GPS status based on accuracy
+                    if (accuracy < 10) {
+                        this.updateGPSStatus('active', 'High accuracy GPS signal');
+                    } else if (accuracy < 50) {
+                        this.updateGPSStatus('active', `GPS active - Accuracy: ±${accuracy}m`);
+                    } else {
+                        this.updateGPSStatus('warning', `Low accuracy GPS (±${accuracy}m) - Move to open area`);
+                    }
+
+                } catch (error) {
+                    console.error('Error in GPS update:', error);
                 }
             }
 
             processWorkoutMovement(coords) {
-                const lastCoord = this.state.workoutData.coordinates[this.state.workoutData.coordinates.length - 1];
-                
-                if (lastCoord) {
+                try {
+                    const now = Date.now();
+                    const lastCoord = this.state.workoutData.coordinates[this.state.workoutData.coordinates.length - 1];
+                    const minDistance = 5; // Minimum distance in meters to record a new point
+                    const maxAccuracy = 50; // Maximum acceptable accuracy in meters
+                    
+                    // Skip if accuracy is too poor
+                    if (coords.accuracy > maxAccuracy) {
+                        console.log(`Skipping point - Poor accuracy: ${coords.accuracy}m`);
+                        return;
+                    }
+                    
+                    // For the first point or if we don't have a last coordinate
+                    if (!lastCoord) {
+                        this.state.workoutData.coordinates.push({
+                            latitude: coords.latitude,
+                            longitude: coords.longitude,
+                            timestamp: now,
+                            accuracy: coords.accuracy,
+                            speed: coords.speed || 0
+                        });
+                        return;
+                    }
+                    
+                    // Calculate distance from last point
                     const distance = this.calculateDistance(
                         lastCoord.latitude, lastCoord.longitude,
                         coords.latitude, coords.longitude
                     );
                     
-                    if (distance > 3 && coords.accuracy < 50) {
+                    // Only process if we've moved enough and accuracy is good
+                    if (distance >= minDistance) {
+                        // Calculate time difference in hours
+                        const timeDiff = (now - lastCoord.timestamp) / 1000 / 3600; // hours
+                        
+                        // Update total distance (convert meters to kilometers)
                         this.state.workoutData.distance += distance / 1000;
+                        
+                        // Calculate calories (simplified formula: 0.75 * weight(kg) * distance(km))
+                        // Using 70kg as average weight if not specified
+                        const weight = 70; // In a real app, get this from user profile
+                        const caloriesBurned = 0.75 * weight * (distance / 1000);
+                        this.state.workoutData.calories += caloriesBurned;
+                        
+                        // Add new coordinate point
                         this.state.workoutData.coordinates.push({
                             latitude: coords.latitude,
                             longitude: coords.longitude,
-                            timestamp: Date.now(),
-                            accuracy: coords.accuracy
+                            timestamp: now,
+                            accuracy: coords.accuracy,
+                            speed: coords.speed || 0,
+                            distance: distance,
+                            calories: caloriesBurned
                         });
-
+                        
+                        // Update the map path
                         if (this.path) {
                             this.path.addLatLng([coords.latitude, coords.longitude]);
                         }
+                        
+                        // Update UI more frequently during movement
+                        this.updateWorkoutUI();
+                        
+                        // Auto-save workout data every 30 seconds or 100m
+                        if (this.state.workoutData.coordinates.length % 10 === 0 || distance > 100) {
+                            this.saveWorkoutData();
+                        }
                     }
-                } else {
-                    this.state.workoutData.coordinates.push({
-                        latitude: coords.latitude,
-                        longitude: coords.longitude,
-                        timestamp: Date.now(),
-                        accuracy: coords.accuracy
-                    });
+                } catch (error) {
+                    console.error('Error processing workout movement:', error);
                 }
             }
 
